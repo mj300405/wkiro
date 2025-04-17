@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Checkpoints - ignore all run directories but keep best_model
+checkpoints/run_*/
+data/
+
+# Keep the best model directory
+!checkpoints/best_model/
+
 # C extensions
 *.so
 
