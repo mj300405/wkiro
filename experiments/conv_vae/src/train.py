@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
@@ -8,7 +9,7 @@ from tqdm import tqdm
 import os
 from datetime import datetime
 
-from model import Autoencoder, VariationalAutoencoder
+from model import ConvVAE
 
 def get_device():
     if torch.cuda.is_available():
@@ -18,7 +19,7 @@ def get_device():
     else:
         return torch.device('cpu')
 
-def setup_checkpoint_dirs(model_type):
+def setup_checkpoint_dirs():
     # Create main checkpoints directory
     if not os.path.exists('checkpoints'):
         os.makedirs('checkpoints')
@@ -44,13 +45,13 @@ def save_checkpoint(model, optimizer, epoch, loss, filepath):
     }
     torch.save(checkpoint, filepath)
 
-def train_autoencoder(model_type='standard', latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-4):
+def train_vae(latent_dim=2, epochs=500, batch_size=128, learning_rate=1e-4):
     # Set device
     device = get_device()
     print(f"Using device: {device}")
 
     # Setup checkpoint directories
-    best_model_dir, run_dir = setup_checkpoint_dirs(model_type)
+    best_model_dir, run_dir = setup_checkpoint_dirs()
     print(f"Saving checkpoints to: {run_dir}")
     print(f"Best model will be saved to: {best_model_dir}")
 
@@ -67,15 +68,12 @@ def train_autoencoder(model_type='standard', latent_dim=32, epochs=100, batch_si
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
     # Initialize model
-    if model_type == 'standard':
-        model = Autoencoder(latent_dim=latent_dim)
-    else:
-        model = VariationalAutoencoder(latent_dim=latent_dim)
-    
+    model = ConvVAE(latent_dim=latent_dim)
     model = model.to(device)
 
-    # Define optimizer and loss function
+    # Define optimizer and scheduler
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    scheduler = CosineAnnealingLR(optimizer, T_max=epochs, eta_min=1e-6)
     criterion = nn.MSELoss()
 
     # Training loop
@@ -87,32 +85,33 @@ def train_autoencoder(model_type='standard', latent_dim=32, epochs=100, batch_si
         total_loss = 0
         progress_bar = tqdm(train_loader, desc=f'Epoch {epoch+1}/{epochs}')
 
+        # Calculate KL weight with warm-up
+        kl_weight = min(1.0, (epoch + 1) / 50) * 0.01  # Gradual increase over 50 epochs
+
         for batch_idx, (data, _) in enumerate(progress_bar):
             data = data.to(device)
             optimizer.zero_grad()
 
-            if model_type == 'standard':
-                recon_batch, _ = model(data)
-                loss = criterion(recon_batch, data)
-            else:
-                recon_batch, mu, log_var = model(data)
-                # Reconstruction loss
-                recon_loss = criterion(recon_batch, data)
-                # KL divergence loss
-                kl_loss = -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp())
-                # Total loss with adjusted KL weight
-                kl_weight = 0.01  # Increased from 0.001 to 0.01
-                loss = recon_loss + kl_weight * kl_loss
+            recon_batch, mu, log_var = model(data)
+            # Reconstruction loss
+            recon_loss = criterion(recon_batch, data)
+            # KL divergence loss
+            kl_loss = -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp())
+            # Total loss with warm-up KL weight
+            loss = recon_loss + kl_weight * kl_loss
 
             loss.backward()
             optimizer.step()
 
             total_loss += loss.item()
-            progress_bar.set_postfix({'loss': loss.item()})
+            progress_bar.set_postfix({'loss': loss.item(), 'lr': optimizer.param_groups[0]['lr']})
+
+        # Step the scheduler
+        scheduler.step()
 
         avg_loss = total_loss / len(train_loader)
         train_losses.append(avg_loss)
-        print(f'Epoch [{epoch+1}/{epochs}], Average Loss: {avg_loss:.4f}')
+        print(f'Epoch [{epoch+1}/{epochs}], Average Loss: {avg_loss:.4f}, LR: {optimizer.param_groups[0]["lr"]:.6f}')
 
         # Save checkpoint every 10 epochs
         if (epoch + 1) % 10 == 0:
@@ -123,13 +122,13 @@ def train_autoencoder(model_type='standard', latent_dim=32, epochs=100, batch_si
         # Save best model if current loss is better
         if avg_loss < best_loss:
             best_loss = avg_loss
-            best_model_path = os.path.join(best_model_dir, f'autoencoder_{model_type}_best.pth')
+            best_model_path = os.path.join(best_model_dir, 'vae_best.pth')
             save_checkpoint(model, optimizer, epoch + 1, avg_loss, best_model_path)
             print(f"New best model saved with loss: {avg_loss:.4f}")
 
         # Save sample reconstructions
         if (epoch + 1) % 10 == 0:
-            save_reconstructions(model, data[:8], epoch + 1, model_type, run_dir)
+            save_reconstructions(model, data[:8], epoch + 1, run_dir)
 
     # Save final model
     final_checkpoint_path = os.path.join(run_dir, 'final.pth')
@@ -145,13 +144,10 @@ def train_autoencoder(model_type='standard', latent_dim=32, epochs=100, batch_si
     plt.savefig(os.path.join(run_dir, 'training_loss.png'))
     plt.close()
 
-def save_reconstructions(model, data, epoch, model_type, save_dir):
+def save_reconstructions(model, data, epoch, save_dir):
     model.eval()
     with torch.no_grad():
-        if model_type == 'standard':
-            recon_batch, _ = model(data)
-        else:
-            recon_batch, _, _ = model(data)
+        recon_batch, _, _ = model(data)
 
     # Plot original and reconstructed images
     fig, axes = plt.subplots(2, 8, figsize=(16, 4))
@@ -173,17 +169,14 @@ def save_reconstructions(model, data, epoch, model_type, save_dir):
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description='Train Autoencoder on MNIST')
-    parser.add_argument('--model_type', type=str, default='standard', choices=['standard', 'variational'],
-                        help='Type of autoencoder to train (standard or variational)')
-    parser.add_argument('--latent_dim', type=int, default=32, help='Dimension of latent space')
+    parser = argparse.ArgumentParser(description='Train Convolutional VAE on MNIST')
+    parser.add_argument('--latent_dim', type=int, default=2, help='Dimension of latent space')
     parser.add_argument('--epochs', type=int, default=500, help='Number of epochs to train')
     parser.add_argument('--batch_size', type=int, default=128, help='Batch size for training')
     parser.add_argument('--learning_rate', type=float, default=1e-4, help='Learning rate')
 
     args = parser.parse_args()
-    train_autoencoder(
-        model_type=args.model_type,
+    train_vae(
         latent_dim=args.latent_dim,
         epochs=args.epochs,
         batch_size=args.batch_size,

@@ -1,0 +1,19 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+ENV/
+
+# Project specific
+data/
+experiments/*/checkpoints/run_*/
+experiments/*/generated_samples/
+
+# Keep best model
+!experiments/*/checkpoints/best_model/
+!experiments/*/checkpoints/best_model/*

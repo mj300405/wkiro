@@ -179,3 +179,22 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Virtual Environment
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+data/
+experiments/*/checkpoints/run_*/
+experiments/*/generated_samples/
+
+# Keep best model
+!experiments/*/checkpoints/best_model/
+!experiments/*/checkpoints/best_model/*
