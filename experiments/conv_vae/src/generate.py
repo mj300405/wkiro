@@ -13,7 +13,7 @@ def get_device():
     else:
         return torch.device('cpu')
 
-def generate_digits(latent_dim=2, num_samples=10):
+def generate_digits(latent_dim=32, num_samples=10):
     # Set device
     device = get_device()
     print(f"Using device: {device}")
@@ -45,10 +45,15 @@ def generate_digits(latent_dim=2, num_samples=10):
         samples = model.decode(z)
 
     # Plot generated digits
-    fig, axes = plt.subplots(1, num_samples, figsize=(2*num_samples, 2))
+    fig, axes = plt.subplots(1, num_samples, figsize=(2*num_samples, 2.5))
     for i in range(num_samples):
         axes[i].imshow(samples[i][0].cpu(), cmap='gray')
         axes[i].axis('off')
+        # Add digit label (0-9)
+        axes[i].set_title(f"Digit {i}", fontsize=12)
+    
+    plt.suptitle(f"Generated MNIST Digits (Latent Dim: {latent_dim})", fontsize=14)
+    plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to make room for suptitle
     
     # Save with timestamp
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -80,12 +85,19 @@ def generate_latent_space_grid(model, device, output_dir, timestamp, grid_size=2
     
     # Create a large figure
     fig = plt.figure(figsize=(20, 20))
+    fig.suptitle("Latent Space Grid Visualization (2D)", fontsize=20)
+    
     for i in range(grid_size * grid_size):
         ax = plt.subplot(grid_size, grid_size, i + 1)
         ax.imshow(samples[i][0].cpu(), cmap='gray')
         ax.axis('off')
+        
+        # Add coordinates as subtitle
+        row = i // grid_size
+        col = i % grid_size
+        ax.set_title(f"({x[col]:.1f}, {y[row]:.1f})", fontsize=6)
     
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 1, 0.98])  # Adjust layout to make room for suptitle
     output_path = os.path.join(output_dir, f'latent_space_grid_{timestamp}.png')
     plt.savefig(output_path)
     plt.close()
@@ -95,7 +107,7 @@ def generate_latent_space_grid(model, device, output_dir, timestamp, grid_size=2
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='Generate digits using trained VAE')
-    parser.add_argument('--latent_dim', type=int, default=2, help='Dimension of latent space')
+    parser.add_argument('--latent_dim', type=int, default=32, help='Dimension of latent space')
     parser.add_argument('--num_samples', type=int, default=10, help='Number of digits to generate')
 
     args = parser.parse_args()
