@@ -49,10 +49,10 @@ def generate_digits(latent_dim=32, num_samples=10):
     for i in range(num_samples):
         axes[i].imshow(samples[i][0].cpu(), cmap='gray')
         axes[i].axis('off')
-        # Add digit label (0-9)
-        axes[i].set_title(f"Digit {i}", fontsize=12)
+        # Change label to Sample instead of Digit
+        axes[i].set_title(f"Sample {i+1}", fontsize=12)
     
-    plt.suptitle(f"Generated MNIST Digits (Latent Dim: {latent_dim})", fontsize=14)
+    plt.suptitle(f"Generated MNIST Samples (Latent Dim: {latent_dim})", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to make room for suptitle
     
     # Save with timestamp

@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 import numpy as np
 
-from model import ConvVAE
+from model import ConditionalVAE
 
 def get_device():
     if torch.cuda.is_available():
@@ -46,7 +46,7 @@ def save_checkpoint(model, optimizer, epoch, loss, filepath):
     }
     torch.save(checkpoint, filepath)
 
-def train_vae(latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-3, beta=1.0, early_stopping_patience=10):
+def train_cvae(latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-3, beta=1.0, early_stopping_patience=10):
     # Set device
     device = get_device()
     print(f"Using device: {device}")
@@ -76,7 +76,7 @@ def train_vae(latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-3, bet
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
     # Initialize model
-    model = ConvVAE(latent_dim=latent_dim)
+    model = ConditionalVAE(latent_dim=latent_dim)
     model = model.to(device)
 
     # Define optimizer and scheduler
@@ -96,11 +96,12 @@ def train_vae(latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-3, bet
         total_train_kl = 0
         progress_bar = tqdm(train_loader, desc=f'Epoch {epoch+1}/{epochs}')
 
-        for batch_idx, (data, _) in enumerate(progress_bar):
+        for batch_idx, (data, labels) in enumerate(progress_bar):
             data = data.to(device)
+            labels = labels.to(device)
             optimizer.zero_grad()
 
-            recon_batch, mu, log_var = model(data)
+            recon_batch, mu, log_var = model(data, labels)
             
             # Use the model's loss function
             loss, recon_loss, kl_loss = model.loss_function(recon_batch, data, mu, log_var, beta=beta)
@@ -124,9 +125,10 @@ def train_vae(latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-3, bet
         total_val_kl = 0
         
         with torch.no_grad():
-            for data, _ in val_loader:
+            for data, labels in val_loader:
                 data = data.to(device)
-                recon_batch, mu, log_var = model(data)
+                labels = labels.to(device)
+                recon_batch, mu, log_var = model(data, labels)
                 loss, recon_loss, kl_loss = model.loss_function(recon_batch, data, mu, log_var, beta=beta)
                 total_val_loss += loss.item()
                 total_val_recon += recon_loss.item()
@@ -162,7 +164,7 @@ def train_vae(latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-3, bet
         if avg_val_loss < best_loss:
             best_loss = avg_val_loss
             patience_counter = 0
-            best_model_path = os.path.join(best_model_dir, 'vae_best.pth')
+            best_model_path = os.path.join(best_model_dir, 'cvae_best.pth')
             save_checkpoint(model, optimizer, epoch + 1, avg_val_loss, best_model_path)
             print(f"New best model saved with validation loss: {avg_val_loss:.4f}")
         else:
@@ -173,7 +175,7 @@ def train_vae(latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-3, bet
 
         # Save sample reconstructions
         if (epoch + 1) % 10 == 0:
-            save_reconstructions(model, data[:8], epoch + 1, run_dir)
+            save_reconstructions(model, data[:8], labels[:8], epoch + 1, run_dir)
 
     # Save final model
     final_checkpoint_path = os.path.join(run_dir, 'final.pth')
@@ -191,10 +193,10 @@ def train_vae(latent_dim=32, epochs=100, batch_size=128, learning_rate=1e-3, bet
     plt.savefig(os.path.join(run_dir, 'training_loss.png'))
     plt.close()
 
-def save_reconstructions(model, data, epoch, save_dir):
+def save_reconstructions(model, data, labels, epoch, save_dir):
     model.eval()
     with torch.no_grad():
-        recon_batch, _, _ = model(data)
+        recon_batch, _, _ = model(data, labels)
 
     # Plot original and reconstructed images
     fig, axes = plt.subplots(2, 8, figsize=(16, 4))
@@ -204,19 +206,21 @@ def save_reconstructions(model, data, epoch, save_dir):
         axes[0, i].axis('off')
         if i == 0:
             axes[0, i].set_title('Original')
+        axes[0, i].set_xlabel(f'Label: {labels[i].item()}')
 
         # Reconstructed images
         axes[1, i].imshow(recon_batch[i][0].cpu(), cmap='gray')
         axes[1, i].axis('off')
         if i == 0:
             axes[1, i].set_title('Reconstructed')
+        axes[1, i].set_xlabel(f'Label: {labels[i].item()}')
 
     plt.savefig(os.path.join(save_dir, f'reconstruction_epoch_{epoch}.png'))
     plt.close()
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description='Train Convolutional VAE on MNIST')
+    parser = argparse.ArgumentParser(description='Train Conditional VAE on MNIST')
     parser.add_argument('--latent_dim', type=int, default=32, help='Dimension of latent space')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train')
     parser.add_argument('--batch_size', type=int, default=128, help='Batch size for training')
@@ -225,7 +229,7 @@ if __name__ == "__main__":
     parser.add_argument('--early_stopping_patience', type=int, default=10, help='Early stopping patience')
 
     args = parser.parse_args()
-    train_vae(
+    train_cvae(
         latent_dim=args.latent_dim,
         epochs=args.epochs,
         batch_size=args.batch_size,
