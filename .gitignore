@@ -7,9 +7,9 @@ __pycache__/
 checkpoints/run_*/
 data/
 
-# Keep the best model directory but ignore its contents
-checkpoints/best_model/*
-!checkpoints/best_model/.gitkeep
+# Keep model directories but ignore their contents
+experiments/*/checkpoints/best_model/*
+!experiments/*/checkpoints/best_model/.gitkeep
 
 # C extensions
 *.so
