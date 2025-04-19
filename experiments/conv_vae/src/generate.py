@@ -49,11 +49,22 @@ def generate_digits(latent_dim=32, num_samples=10):
     for i in range(num_samples):
         axes[i].imshow(samples[i][0].cpu(), cmap='gray')
         axes[i].axis('off')
-        # Change label to Sample instead of Digit
-        axes[i].set_title(f"Sample {i+1}", fontsize=12)
+        # Show latent space coordinates in a more readable format
+        latent_coords = z[i].cpu().numpy()
+        # Format coordinates with fewer decimals and group them
+        coord_groups = []
+        for j in range(0, len(latent_coords), 4):  # Show 4 coordinates per line
+            group = latent_coords[j:j+4]
+            coord_str = ', '.join([f'{coord:.1f}' for coord in group])
+            coord_groups.append(coord_str)
+        
+        # Join groups with newlines and set as title
+        title = 'z=[\n' + '\n'.join(coord_groups) + ']'
+        axes[i].set_title(title, fontsize=8, pad=10)
     
     plt.suptitle(f"Generated MNIST Samples (Latent Dim: {latent_dim})", fontsize=14)
-    plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to make room for suptitle
+    # Increase vertical space for the multi-line titles
+    plt.tight_layout(rect=[0, 0, 1, 0.90], h_pad=2.0)  # Adjusted rect and added h_pad
     
     # Save with timestamp
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
