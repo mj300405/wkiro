@@ -192,8 +192,8 @@ def train_gan(
         print(f'Discriminator Loss: {avg_d_loss:.4f}')
         
         # Save samples
-        if epoch % sample_interval == 0:
-            save_samples(generator, epoch, device, latent_dim, save_dir=run_dir)
+        #if epoch % sample_interval == 0:
+        #    save_samples(generator, epoch, device, latent_dim, save_dir=run_dir)
         
         # Save checkpoint every save_interval epochs
         if epoch % save_interval == 0:
