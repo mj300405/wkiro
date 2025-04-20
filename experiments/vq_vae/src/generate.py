@@ -25,7 +25,7 @@ def get_device():
 
 def visualize_codebook(model, save_path):
     """Visualize the learned codebook embeddings."""
-    embeddings = model.vector_quantizer.embedding.weight.data.cpu()
+    embeddings = model.vq.embedding.weight.data.cpu()
     
     # Reshape embeddings to square grid
     n = int(np.ceil(np.sqrt(len(embeddings))))
@@ -49,17 +49,21 @@ def visualize_codebook(model, save_path):
 
 def interpolate_latent(model, img1, img2, num_steps=10, save_path=None):
     """Interpolate between two images in the latent space."""
+    device = next(model.parameters()).device  # Get the device the model is on
+    img1 = img1.to(device)
+    img2 = img2.to(device)
+    
     with torch.no_grad():
         # Get latent representations
         _, _, indices1 = model(img1.unsqueeze(0))
         _, _, indices2 = model(img2.unsqueeze(0))
         
         # Convert indices to one-hot vectors
-        one_hot1 = F.one_hot(indices1.view(-1), num_classes=model.vector_quantizer.num_embeddings).float()
-        one_hot2 = F.one_hot(indices2.view(-1), num_classes=model.vector_quantizer.num_embeddings).float()
+        one_hot1 = F.one_hot(indices1.view(-1), num_classes=model.vq.num_embeddings).float().to(device)
+        one_hot2 = F.one_hot(indices2.view(-1), num_classes=model.vq.num_embeddings).float().to(device)
         
         # Create interpolation steps
-        alphas = torch.linspace(0, 1, num_steps)
+        alphas = torch.linspace(0, 1, num_steps, device=device)
         interpolated_images = []
         
         for alpha in alphas:
@@ -67,8 +71,8 @@ def interpolate_latent(model, img1, img2, num_steps=10, save_path=None):
             interp = (1 - alpha) * one_hot1 + alpha * one_hot2
             
             # Get embeddings
-            quantized = torch.matmul(interp, model.vector_quantizer.embedding.weight)
-            quantized = quantized.view(indices1.shape[0], indices1.shape[1], indices1.shape[2], -1)
+            quantized = torch.matmul(interp, model.vq.embedding.weight)
+            quantized = quantized.view(indices1.shape[0], -1, 7, 7)  # Reshape to [batch_size, channels, height, width]
             
             # Decode
             decoded = model.decoder(quantized)
@@ -89,16 +93,18 @@ def interpolate_latent(model, img1, img2, num_steps=10, save_path=None):
 def generate_samples(model, num_samples=10, temperature=1.0, save_path=None):
     """Generate new samples by sampling from the codebook."""
     model.eval()
+    device = next(model.parameters()).device  # Get the device the model is on
     with torch.no_grad():
         # Sample random indices
-        probs = torch.ones(model.vector_quantizer.num_embeddings) / model.vector_quantizer.num_embeddings
+        probs = torch.ones(model.vq.num_embeddings, device=device) / model.vq.num_embeddings
         indices = torch.multinomial(probs, num_samples * 7 * 7, replacement=True)  # 7x7 is the encoded image size
         indices = indices.view(num_samples, 1, 7, 7)  # Reshape to match the expected format
         
         # Get embeddings for these indices
-        one_hot = F.one_hot(indices.view(-1), num_classes=model.vector_quantizer.num_embeddings).float()
-        quantized = torch.matmul(one_hot, model.vector_quantizer.embedding.weight)
-        quantized = quantized.view(num_samples, 7, 7, -1)
+        one_hot = F.one_hot(indices.view(-1), num_classes=model.vq.num_embeddings).float().to(device)
+        quantized = torch.matmul(one_hot, model.vq.embedding.weight)
+        # Reshape to [batch_size, channels, height, width]
+        quantized = quantized.view(num_samples, -1, 7, 7)
         
         # Decode
         samples = model.decoder(quantized)
@@ -154,8 +160,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate samples from trained VQ-VAE')
-    parser.add_argument('--checkpoint_path', type=str, required=True, help='Path to the model checkpoint')
-    parser.add_argument('--output_dir', type=str, default='outputs', help='Directory to save generated images')
+    parser.add_argument('--checkpoint_path', type=str, default='checkpoints/best_model/vqvae_best.pth', help='Path to the model checkpoint')
+    parser.add_argument('--output_dir', type=str, default='generated_samples', help='Directory to save generated images')
     parser.add_argument('--num_samples', type=int, default=10, help='Number of samples to generate')
     parser.add_argument('--temperature', type=float, default=1.0, help='Sampling temperature')
     parser.add_argument('--interpolation_steps', type=int, default=10, help='Number of interpolation steps')
