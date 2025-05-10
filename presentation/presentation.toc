@@ -1,0 +1,5 @@
+\babel@toc {polish}{}\relax 
+\beamer@sectionintoc {1}{Modele}{4}{0}{1}
+\beamer@sectionintoc {2}{Porównanie modeli}{10}{0}{2}
+\beamer@sectionintoc {3}{Wyzwania implementacyjne}{11}{0}{3}
+\beamer@sectionintoc {4}{Przykłady zastosowań}{12}{0}{4}

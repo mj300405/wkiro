@@ -1,0 +1,359 @@
+% !TeX program = pdflatex
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{biblatex}
+\addbibresource{references.bib}
+
+% Ulepszony motyw i kolory
+\usetheme{Madrid}
+\usecolortheme{dolphin}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+% Lepsze style dla diagramów
+\tikzset{
+  block/.style={
+    draw,
+    rectangle,
+    rounded corners,
+    minimum width=2cm,
+    minimum height=1cm,
+    align=center,
+    fill=blue!10
+  }
+}
+
+\title{Generowanie cyfr pisanych odręcznie na bazie sieci neuronowej o architekturze autoencodera}
+\subtitle{Analiza i implementacja różnych modeli generatywnych}
+\author{Prowadzący: Adam Świtoński}
+\institute{Politechnika Śląska}
+\date{Maj 2024}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Plan prezentacji}
+  \tableofcontents
+\end{frame}
+
+\begin{frame}{Opis projektu}
+  \begin{block}{Cel projektu}
+    Zastosowanie sieci neuronowej o architekturze autoencodera do generowania niskorozdzielczych obrazów cyfr pisanych odręcznie.
+  \end{block}
+  
+  \begin{itemize}
+    \item Trenowanie różnych wariantów autoencoder'a
+    \item Generowanie nowych cyfr poprzez podawanie losowych wartości na wejście dekodera
+    \item Badanie wpływu struktury sieci (liczba warstw, liczba neuronów) oraz parametrów uczenia
+    \item Wykorzystanie bazy danych MNIST
+  \end{itemize}
+  
+  \begin{block}{Rozważane warianty}
+    Klasyczny autoencoder, wariacyjny autoencoder (VAE), GAN, Diffusion, VQ-VAE, Conditional VAE
+  \end{block}
+\end{frame}
+
+% --- MODELE ---
+
+\section{Modele}
+
+% AUTOENCODER
+\begin{frame}{Autoencoder}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \textbf{Autoencoder} to rodzaj sieci neuronowej, która uczy się kompresować dane wejściowe do reprezentacji o niższym wymiarze (kod), a następnie rekonstruować oryginalne dane z tej reprezentacji.
+      
+      \medskip
+      \textbf{Zastosowania:}
+      \begin{itemize}
+        \item Redukcja wymiarowości
+        \item Denoising (odszumianie)
+        \item Generowanie nowych danych
+      \end{itemize}
+      
+      \textbf{Zalety:} prostota, szybki trening, interpretowalność
+      
+      \textbf{Wady:} ograniczona zdolność generatywna, brak kontroli nad rozkładem latentnym
+      
+      \textbf{Bibliografia:} \cite{hinton2006reducing}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (input) at (0,0) {Wejście};
+        \node[block, below=0.8cm of input] (enc) {Enkoder};
+        \node[block, below=0.8cm of enc] (code) {Kod};
+        \node[block, below=0.8cm of code] (dec) {Dekoder};
+        \node[block, below=0.8cm of dec] (output) {Wyjście};
+        
+        \draw[->, thick] (input) -- (enc);
+        \draw[->, thick] (enc) -- (code);
+        \draw[->, thick] (code) -- (dec);
+        \draw[->, thick] (dec) -- (output);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% VAE
+\begin{frame}{Wariacyjny Autoencoder (VAE)}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \textbf{VAE} to probabilistyczne rozszerzenie autoencodera, które modeluje rozkład latentny danych.
+      
+      \medskip
+      \textbf{Kluczowe cechy:}
+      \begin{itemize}
+        \item Modelowanie rozkładu latentnego ($\mu$, $\sigma$)
+        \item Regularyzacja poprzez KL-dywergencję
+        \item Generowanie nowych próbek przez próbkowanie
+      \end{itemize}
+      
+      \textbf{Zalety:} generatywność, ciągła przestrzeń latentna, możliwość interpolacji
+      
+      \textbf{Wady:} rozmyte próbki, trudność w trenowaniu
+      
+      \textbf{Bibliografia:} \cite{kingma2013auto}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (input) at (0,0) {Wejście};
+        \node[block, below=0.8cm of input] (enc) {Enkoder};
+        \node[block, below=0.8cm of enc] (mu) {$\mu$, $\sigma$};
+        \node[block, below=0.8cm of mu] (dec) {Dekoder};
+        \node[block, below=0.8cm of dec] (output) {Wyjście};
+        
+        \draw[->, thick] (input) -- (enc);
+        \draw[->, thick] (enc) -- (mu);
+        \draw[->, thick] (mu) -- (dec);
+        \draw[->, thick] (dec) -- (output);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% CONDITIONAL VAE
+\begin{frame}{Conditional VAE}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \textbf{Conditional VAE} (CVAE) to wariacyjny autoencoder, który dodatkowo warunkuje generowanie na zadanej klasie (np. cyfra).
+      
+      \medskip
+      \textbf{Kluczowe cechy:}
+      \begin{itemize}
+        \item Warunkowanie generowania na etykietach
+        \item Możliwość sterowania procesem generacji
+        \item Łączenie etykiet z danymi wejściowymi
+      \end{itemize}
+      
+      \textbf{Zalety:} kontrola nad generowanymi danymi, elastyczność
+      
+      \textbf{Wady:} większa złożoność, wymaga etykiet
+      
+      \textbf{Bibliografia:} \cite{sohn2015learning}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (input) at (0,0) {Wejście + klasa};
+        \node[block, below=0.8cm of input] (enc) {Enkoder};
+        \node[block, below=0.8cm of enc] (mu) {$\mu$, $\sigma$};
+        \node[block, below=0.8cm of mu] (dec) {Dekoder};
+        \node[block, below=0.8cm of dec] (output) {Wyjście};
+        
+        \draw[->, thick] (input) -- (enc);
+        \draw[->, thick] (enc) -- (mu);
+        \draw[->, thick] (mu) -- (dec);
+        \draw[->, thick] (dec) -- (output);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% VQ-VAE
+\begin{frame}{VQ-VAE}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \textbf{VQ-VAE} to autoencoder, w którym przestrzeń latentna jest kwantyzowana do skończonego zbioru wektorów (słownik kodów).
+      
+      \medskip
+      \textbf{Kluczowe cechy:}
+      \begin{itemize}
+        \item Dyskretna przestrzeń latentna
+        \item Kwantyzacja wektorowa
+        \item Słownik kodowy
+      \end{itemize}
+      
+      \textbf{Zalety:} dyskretna reprezentacja, dobre wyniki w generowaniu sekwencji
+      
+      \textbf{Wady:} trudność w trenowaniu, konieczność doboru rozmiaru słownika
+      
+      \textbf{Bibliografia:} \cite{van2017neural}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (input) at (0,0) {Wejście};
+        \node[block, below=0.8cm of input] (enc) {Enkoder};
+        \node[block, below=0.8cm of enc] (quant) {Kwantyzacja};
+        \node[block, below=0.8cm of quant] (dec) {Dekoder};
+        \node[block, below=0.8cm of dec] (output) {Wyjście};
+        
+        \draw[->, thick] (input) -- (enc);
+        \draw[->, thick] (enc) -- (quant);
+        \draw[->, thick] (quant) -- (dec);
+        \draw[->, thick] (dec) -- (output);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% GAN
+\begin{frame}{Generative Adversarial Network (GAN)}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \textbf{GAN} to model generatywny składający się z dwóch sieci: generatora (tworzy próbki) i dyskryminatora (odróżnia próbki prawdziwe od fałszywych).
+      
+      \medskip
+      \textbf{Kluczowe cechy:}
+      \begin{itemize}
+        \item Układ rywalizujący (gra dwuosobowa)
+        \item Generator tworzy coraz lepsze próbki
+        \item Dyskryminator staje się coraz trudniejszy do oszukania
+      \end{itemize}
+      
+      \textbf{Zalety:} realistyczne próbki, duża elastyczność
+      
+      \textbf{Wady:} trudność w trenowaniu, niestabilność, mode collapse
+      
+      \textbf{Bibliografia:} \cite{goodfellow2014generative}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (noise) at (0,0) {Szum};
+        \node[block, below=0.8cm of noise] (gen) {Generator};
+        \node[block, below=0.8cm of gen] (img) {Obraz};
+        \node[block, below=0.8cm of img] (disc) {Dyskryminator};
+        \node[block, below=0.8cm of disc] (result) {Prawdziwy/Fałszywy};
+        
+        \draw[->, thick] (noise) -- (gen);
+        \draw[->, thick] (gen) -- (img);
+        \draw[->, thick] (img) -- (disc);
+        \draw[->, thick] (disc) -- (result);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% DIFFUSION
+\begin{frame}{Diffusion Model}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \textbf{Model dyfuzji} to nowoczesny model generatywny, który uczy się odszumiania danych przez odwracanie procesu stopniowego dodawania szumu.
+      
+      \medskip
+      \textbf{Kluczowe cechy:}
+      \begin{itemize}
+        \item Proces forward (dodawanie szumu)
+        \item Proces reverse (przewidywanie i usuwanie szumu)
+        \item Iteracyjne próbkowanie
+      \end{itemize}
+      
+      \textbf{Zalety:} wysoka jakość generowanych próbek, stabilność treningu
+      
+      \textbf{Wady:} długi czas generowania, złożoność obliczeniowa
+      
+      \textbf{Bibliografia:} \cite{ho2020denoising}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{tikzpicture}[scale=0.55, transform shape]
+        \node[block] (xt) at (0,0) {$x_T$ (szum)};
+        \node[block, below=0.6cm of xt] (dots1) {$\cdots$};
+        \node[block, below=0.6cm of dots1] (x1) {$x_1$};
+        \node[block, below=0.6cm of x1] (x0) {$x_0$ (obraz)};
+        
+        \draw[->, thick] (xt) -- (dots1) node[midway, right] {Odszumianie};
+        \draw[->, thick] (dots1) -- (x1);
+        \draw[->, thick] (x1) -- (x0);
+        \draw[->, thick] (x0) to [out=180,in=180] node[midway, left] {Dodawanie szumu} (xt);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% --- PORÓWNANIE MODELI ---
+
+\section{Porównanie modeli}
+
+\begin{frame}{Porównanie modeli generatywnych}
+  \begin{tabular}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|}
+    \hline
+    \textbf{Model} & \textbf{Zalety} & \textbf{Wady} \\
+    \hline
+    Autoencoder (2006) & Prostota implementacji, szybki trening & Słaba generatywność, rozmyte obrazy \\
+    \hline
+    VAE (2013) & Solidne podstawy teoretyczne, ciągła przestrzeń latentna & Rozmyte obrazy, trudność balansowania rekonstrukcji i KL divergencji \\
+    \hline
+    GAN (2014) & Ostre, realistyczne próbki & Niestabilność treningu, mode collapse \\
+    \hline
+    Conditional VAE (2015) & Kontrola nad procesem generacji, warunkowanie na klasach & Większa złożoność implementacji, wymaga etykiet \\
+    \hline
+    VQ-VAE (2017) & Ostrzejsze obrazy, dobra kompresja & Trudniejszy do trenowania, problemy z kwantyzacją \\
+    \hline
+    Diffusion (2020) & Najlepsza jakość obrazów, stabilny trening & Powolne próbkowanie, wysoka złożoność obliczeniowa \\
+    \hline
+  \end{tabular}
+\end{frame}
+
+% --- WYZWANIA I PRZYKŁADY ---
+
+\section{Wyzwania implementacyjne}
+
+\begin{frame}{Wyzwania implementacyjne}
+  \begin{itemize}
+    \item \textbf{Dobór architektury:} Liczba warstw, liczba neuronów, funkcje aktywacji
+    \item \textbf{Dobór wymiarowości przestrzeni latentnej:} Zbyt mała - utrata informacji, zbyt duża - brak generalizacji
+    \item \textbf{Balansowanie funkcji straty:} Np. w VAE balans między rekonstrukcją a regularyzacją KL
+    \item \textbf{Stabilność treningu:} Szczególnie w przypadku GAN-ów
+    \item \textbf{Efektywność obliczeniowa:} Modele dyfuzji wymagają wielu kroków podczas generowania
+    \item \textbf{Ocena jakości wygenerowanych próbek:} Metody ilościowe vs jakościowe
+  \end{itemize}
+\end{frame}
+
+\section{Przykłady zastosowań}
+
+\begin{frame}{Przykłady zastosowań}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Generowanie danych syntetycznych:}
+      \begin{itemize}
+        \item Augmentacja danych w uczeniu maszynowym
+        \item Syntetyczne dane dla trenowania innych modeli
+        \item Generowanie przykładów do zastosowań edukacyjnych
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Zastosowania praktyczne:}
+      \begin{itemize}
+        \item Transfer stylu pisma
+        \item Uzupełnianie brakujących fragmentów
+        \item Korekta i poprawa pisma odręcznego
+        \item Konwersja cyfr między różnymi stylami
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% --- BIBLIOGRAFIA ---
+
+\begin{frame}[allowframebreaks]{Bibliografia}
+  \printbibliography
+\end{frame}
+
+\end{document}
