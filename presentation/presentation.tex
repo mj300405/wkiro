@@ -4,10 +4,11 @@
 \usepackage[polish]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{tikz}
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning, arrows.meta, decorations.pathreplacing, calc}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{biblatex}
+\usepackage{amsmath, amssymb}
 \addbibresource{references.bib}
 
 % Ulepszony motyw i kolory
@@ -26,8 +27,23 @@
     minimum height=1cm,
     align=center,
     fill=blue!10
+  },
+  annotation/.style={
+    draw=red,
+    thick,
+    -Stealth
   }
 }
+
+% Definicja środowiska formula
+\newenvironment{formula}{%
+  \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm, boxsep=3pt]%
+}{%
+  \end{tcolorbox}%
+}
+
+% Dodanie pakietu tcolorbox
+\usepackage{tcolorbox}
 
 \title{Generowanie cyfr pisanych odręcznie na bazie sieci neuronowej o architekturze autoencodera}
 \subtitle{Analiza i implementacja różnych modeli generatywnych}
@@ -103,6 +119,45 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}{Autoencoder - Funkcja straty}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (input) at (0,0) {$x$};
+        \node[block, below=0.8cm of input] (enc) {Enkoder $f(x)$};
+        \node[block, below=0.8cm of enc] (code) {$z = f(x)$};
+        \node[block, below=0.8cm of code] (dec) {Dekoder $g(z)$};
+        \node[block, below=0.8cm of dec] (output) {$\hat{x} = g(f(x))$};
+        
+        \draw[->, thick] (input) -- (enc);
+        \draw[->, thick] (enc) -- (code);
+        \draw[->, thick] (code) -- (dec);
+        \draw[->, thick] (dec) -- (output);
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \begin{align*}
+        \mathcal{L}_{AE} &= \|x - \hat{x}\|^2 \\
+        &= \|x - g(f(x))\|^2
+        \end{align*}
+      \end{tcolorbox}
+      
+      \medskip
+      gdzie:
+      \begin{itemize}
+        \item $x$ - dane wejściowe (obraz)
+        \item $f(x)$ - funkcja enkodera
+        \item $z = f(x)$ - reprezentacja latentna
+        \item $g(z)$ - funkcja dekodera
+        \item $\hat{x} = g(f(x))$ - rekonstrukcja
+      \end{itemize}
+      
+      Funkcja straty to typowo błąd średniokwadratowy (MSE) lub binary cross-entropy dla obrazów.
+    \end{column}
+  \end{columns}
+\end{frame}
+
 % VAE
 \begin{frame}{Wariacyjny Autoencoder (VAE)}
   \begin{columns}
@@ -136,6 +191,48 @@
         \draw[->, thick] (mu) -- (dec);
         \draw[->, thick] (dec) -- (output);
       \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Wariacyjny Autoencoder (VAE) - Funkcja straty}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (input) at (0,0) {$x$};
+        \node[block, below=0.8cm of input] (enc) {Enkoder};
+        \node[block, below=0.8cm of enc] (params) {$\mu(x), \sigma(x)$};
+        \node[block, below=0.8cm of params] (sample) {$z \sim \mathcal{N}(\mu(x), \sigma^2(x))$};
+        \node[block, below=0.8cm of sample] (dec) {Dekoder};
+        \node[block, below=0.8cm of dec] (output) {$\hat{x} = g(z)$};
+        
+        \draw[->, thick] (input) -- (enc);
+        \draw[->, thick] (enc) -- (params);
+        \draw[->, thick] (params) -- (sample);
+        \draw[->, thick] (sample) -- (dec);
+        \draw[->, thick] (dec) -- (output);
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \begin{align*}
+        \mathcal{L}_{VAE} &= \underbrace{\|x - \hat{x}\|^2}_{\text{Rekonstrukcja}} + \\
+        &\underbrace{\beta \cdot D_{KL}(q(z|x) \| p(z))}_{\text{Regularyzacja KL}}
+        \end{align*}
+      \end{tcolorbox}
+      
+      gdzie:
+      \begin{itemize}
+        \item $q(z|x) = \mathcal{N}(z; \mu(x), \sigma^2(x))$ - kodowanie
+        \item $p(z) = \mathcal{N}(z; 0, I)$ - rozkład a priori
+        \item $\beta$ - waga regularyzacji KL
+      \end{itemize}
+      
+      \medskip
+      Dla rozkładu normalnego, dywergencja KL wynosi:
+      \begin{align*}
+        D_{KL} = \frac{1}{2}\sum_{j=1}^{d}(1 + \log \sigma_j^2 - \mu_j^2 - \sigma_j^2)
+      \end{align*}
     \end{column}
   \end{columns}
 \end{frame}
@@ -177,6 +274,60 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}{Conditional VAE - Funkcja straty}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{tikzpicture}[scale=0.55, transform shape]
+        \node[block] (input) at (0,0) {$x$};
+        \node[block, right=0.6cm of input] (cond) {$y$ (etykieta)};
+        \node[block, below=0.8cm of input] (concat1) {Konkatenacja};
+        \draw[->, thick] (input) -- (concat1);
+        \draw[->, thick] (cond) -- (concat1);
+        
+        \node[block, below=0.8cm of concat1] (enc) {Enkoder};
+        \node[block, below=0.8cm of enc] (params) {$\mu(x,y), \sigma(x,y)$};
+        \node[block, below=0.8cm of params] (sample) {$z \sim \mathcal{N}(\mu, \sigma^2)$};
+        
+        \node[block, below=0.8cm of sample] (concat2) {Konkatenacja};
+        \draw[->, thick] (cond) to [out=270,in=0] (concat2);
+        \draw[->, thick] (sample) -- (concat2);
+        
+        \node[block, below=0.8cm of concat2] (dec) {Dekoder};
+        \node[block, below=0.8cm of dec] (output) {$\hat{x} = g(z,y)$};
+        
+        \draw[->, thick] (concat1) -- (enc);
+        \draw[->, thick] (enc) -- (params);
+        \draw[->, thick] (params) -- (sample);
+        \draw[->, thick] (concat2) -- (dec);
+        \draw[->, thick] (dec) -- (output);
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \begin{align*}
+        \mathcal{L}_{CVAE} &= \underbrace{\|x - \hat{x}\|^2}_{\text{Rekonstrukcja}} + \\
+        &\underbrace{\beta \cdot D_{KL}(q(z|x,y) \| p(z|y))}_{\text{Regularyzacja KL}}
+        \end{align*}
+      \end{tcolorbox}
+      
+      gdzie:
+      \begin{itemize}
+        \item $q(z|x,y) = \mathcal{N}(z; \mu(x,y), \sigma^2(x,y))$
+        \item $p(z|y)$ - warunkowy rozkład a priori
+        \item $y$ - etykieta klasy (np. cyfra 0-9)
+      \end{itemize}
+      
+      \medskip
+      Podczas generowania:
+      \begin{itemize}
+        \item Wybierz etykietę $y$ (np. "3")
+        \item Próbkuj $z \sim \mathcal{N}(0, I)$
+        \item Wygeneruj $\hat{x} = g(z, y)$
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 % VQ-VAE
 \begin{frame}{VQ-VAE}
   \begin{columns}
@@ -210,6 +361,55 @@
         \draw[->, thick] (quant) -- (dec);
         \draw[->, thick] (dec) -- (output);
       \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{VQ-VAE - Funkcja straty}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (input) at (0,0) {$x$};
+        \node[block, below=0.8cm of input] (enc) {Enkoder $f(x)$};
+        \node[block, below=0.8cm of enc] (ze) {$z_e = f(x)$};
+        
+        \node[block, right=1.5cm of ze] (codebook) {Słownik kodów\\$\{e_k\}_{k=1}^K$};
+        
+        \node[block, below=0.8cm of ze] (zq) {$z_q = e_k$, gdzie $k = \arg\min_j \|z_e - e_j\|$};
+        \node[block, below=0.8cm of zq] (dec) {Dekoder $g(z_q)$};
+        \node[block, below=0.8cm of dec] (output) {$\hat{x} = g(z_q)$};
+        
+        \draw[->, thick] (input) -- (enc);
+        \draw[->, thick] (enc) -- (ze);
+        \draw[->, thick] (ze) -- (zq);
+        \draw[->, thick] (codebook) -- node[midway, above] {wybierz} (zq);
+        \draw[->, thick] (zq) -- (dec);
+        \draw[->, thick] (dec) -- (output);
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \begin{align*}
+        \mathcal{L}_{VQ-VAE} &= \underbrace{\|x - \hat{x}\|^2}_{\text{Rekonstrukcja}} + \\
+        &\underbrace{\|sg[z_e] - e\|^2}_{\text{Uaktualnienie słownika}} + \\
+        &\underbrace{\beta \|z_e - sg[e]\|^2}_{\text{Commitment loss}}
+        \end{align*}
+      \end{tcolorbox}
+      
+      gdzie:
+      \begin{itemize}
+        \item $z_e = f(x)$ - wyjście enkodera
+        \item $e$ - wybrany wektor ze słownika
+        \item $z_q$ - kwantyzowany wektor
+        \item $sg[]$ - operacja "stop gradient"
+        \item $\beta$ - współczynnik commitment loss
+      \end{itemize}
+      
+      Słownik kodów jest aktualizowany poprzez:
+      \begin{align*}
+        e_j = \text{MA}(z_e), \text{ dla } j = \arg\min_k \|z_e - e_k\|
+      \end{align*}
+      gdzie MA to średnia krocząca.
     \end{column}
   \end{columns}
 \end{frame}
@@ -251,6 +451,58 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}{GAN - Funkcja straty}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{tikzpicture}[scale=0.6, transform shape]
+        \node[block] (z) at (0,0) {$z \sim \mathcal{N}(0,I)$};
+        \node[block, below=0.8cm of z] (G) {Generator $G(z)$};
+        \node[block, below=0.8cm of G] (Gx) {$\tilde{x} = G(z)$};
+        
+        \node[block, right=2cm of z] (x) {$x \sim p_{data}(x)$};
+        
+        \node[block, below=2.4cm of x] (D1) {Dyskryminator $D(x)$};
+        \node[block, right=0.2cm of D1] (D2) {Dyskryminator $D(\tilde{x})$};
+        
+        \draw[->, thick] (z) -- (G);
+        \draw[->, thick] (G) -- (Gx);
+        \draw[->, thick] (Gx) -- (D2);
+        \draw[->, thick] (x) -- (D1);
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \begin{align*}
+        \min_G \max_D V(D,G) = \mathbb{E}_{x \sim p_{data}(x)}[\log D(x)] + \\
+        \mathbb{E}_{z \sim p_z(z)}[\log(1 - D(G(z)))]
+        \end{align*}
+      \end{tcolorbox}
+      
+      \textbf{Trening dyskryminatora $D$:} 
+      \begin{align*}
+        \max_D \mathbb{E}_{x}[\log D(x)] + \mathbb{E}_{z}[\log(1 - D(G(z)))]
+      \end{align*}
+      
+      \textbf{Trening generatora $G$:} 
+      \begin{align*}
+        \min_G \mathbb{E}_{z}[\log(1 - D(G(z)))]
+      \end{align*}
+      
+      W praktyce często używa się:
+      \begin{align*}
+        \max_G \mathbb{E}_{z}[\log D(G(z))]
+      \end{align*}
+      
+      \medskip
+      \textbf{Proces treningu:}
+      \begin{itemize}
+        \item Naprzemienne aktualizacje D i G
+        \item Balansowanie pomiędzy jakością a różnorodnością
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 % DIFFUSION
 \begin{frame}{Diffusion Model}
   \begin{columns}
@@ -287,11 +539,112 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}{Diffusion Model - Funkcje straty}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{tikzpicture}[scale=0.55, transform shape]
+        \node[block] (x0) at (0,0) {$x_0$ (obraz)};
+        \node[block, below=0.6cm of x0] (x1) {$x_1$};
+        \node[block, below=0.6cm of x1] (dots1) {$\cdots$};
+        \node[block, below=0.6cm of dots1] (xt) {$x_t$};
+        \node[block, below=0.6cm of xt] (dots2) {$\cdots$};
+        \node[block, below=0.6cm of dots2] (xT) {$x_T \sim \mathcal{N}(0,I)$};
+        
+        \draw[->, thick] (x0) -- node[midway, right] {$q(x_1|x_0)$} (x1);
+        \draw[->, thick] (x1) -- node[midway, right] {$q(x_2|x_1)$} (dots1);
+        \draw[->, thick] (dots1) -- node[midway, right] {$q(x_t|x_{t-1})$} (xt);
+        \draw[->, thick] (xt) -- node[midway, right] {$q(x_{t+1}|x_t)$} (dots2);
+        \draw[->, thick] (dots2) -- node[midway, right] {$q(x_T|x_{T-1})$} (xT);
+        
+        \node[block, right=2.5cm of xt] (eps) {Model $\epsilon_\theta$};
+        \draw[->, thick] (xt) -- (eps);
+        \draw[-Stealth, thick, dashed, red] (eps) to[out=20,in=0] node[midway, right] {Predykcja szumu} ($(xt)+(1.5,0.8)$);
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Proces forward (dodawanie szumu):}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \begin{align*}
+        q(x_t|x_{t-1}) &= \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t\mathbf{I}) \\
+        q(x_t|x_0) &= \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I})
+        \end{align*}
+      \end{tcolorbox}
+      
+      \textbf{Parametryzacja:}
+      \begin{align*}
+        x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon
+      \end{align*}
+      gdzie $\epsilon \sim \mathcal{N}(0, \mathbf{I})$
+      
+      \medskip
+      \textbf{Funkcja straty:}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \begin{align*}
+        \mathcal{L}_{simple} = \mathbb{E}_{t,x_0,\epsilon} \left[ \|\epsilon - \epsilon_\theta(x_t, t)\|^2 \right]
+        \end{align*}
+      \end{tcolorbox}
+      
+      gdzie:
+      \begin{itemize}
+        \item $\beta_t$ - harmonogram szumu
+        \item $\bar{\alpha}_t = \prod_{s=1}^{t} (1-\beta_s)$
+        \item $\epsilon_\theta$ - model predykcji szumu
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Diffusion Model - Próbkowanie}
+  \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+    \begin{align*}
+    p_\theta(x_{t-1}|x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))
+    \end{align*}
+  \end{tcolorbox}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Algorytm próbkowania:}
+      \begin{enumerate}
+        \item $x_T \sim \mathcal{N}(0, \mathbf{I})$
+        \item dla $t = T, T-1, \ldots, 1$:
+        \begin{itemize}
+          \item Oblicz $\mu_\theta(x_t, t)$
+          \item $z \sim \mathcal{N}(0, \mathbf{I})$ jeśli $t > 1$, inaczej $z = 0$
+          \item $x_{t-1} = \mu_\theta(x_t, t) + \sigma_t z$
+        \end{itemize}
+        \item Zwróć $x_0$
+      \end{enumerate}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{tikzpicture}[scale=0.55, transform shape]
+        \node[block] (xT) at (0,0) {$x_T \sim \mathcal{N}(0,I)$};
+        \node[block, below=0.6cm of xT] (dots1) {$x_{T-1}$};
+        \node[block, below=0.6cm of dots1] (dots2) {$\cdots$};
+        \node[block, below=0.6cm of dots2] (x1) {$x_1$};
+        \node[block, below=0.6cm of x1] (x0) {$x_0$ (obraz)};
+        
+        \draw[->, thick] (xT) -- node[midway, right] {$p_\theta(x_{T-1}|x_T)$} (dots1);
+        \draw[->, thick] (dots1) -- node[midway, right] {$p_\theta(x_{T-2}|x_{T-1})$} (dots2);
+        \draw[->, thick] (dots2) -- node[midway, right] {$p_\theta(x_1|x_2)$} (x1);
+        \draw[->, thick] (x1) -- node[midway, right] {$p_\theta(x_0|x_1)$} (x0);
+      \end{tikzpicture}
+      
+      \medskip
+      \textbf{Kluczowe równanie:}
+      \begin{align*}
+        \mu_\theta(x_t, t) &= \frac{1}{\sqrt{\alpha_t}} \left( x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}} \epsilon_\theta(x_t, t) \right)
+      \end{align*}
+      
+      gdzie $\alpha_t = 1 - \beta_t$
+    \end{column}
+  \end{columns}
+\end{frame}
+
 % --- PORÓWNANIE MODELI ---
 
 \section{Porównanie modeli}
 
-\begin{frame}{Porównanie modeli generatywnych}
+\begin{frame}{Porównanie modeli generatywnych - tabela}
   \begin{tabular}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|}
     \hline
     \textbf{Model} & \textbf{Zalety} & \textbf{Wady} \\
@@ -311,6 +664,77 @@
   \end{tabular}
 \end{frame}
 
+\begin{frame}{Porównanie funkcji strat modeli generatywnych}
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+      \textbf{Autoencoder:}
+      \vspace{-0.2cm}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm, boxsep=2pt, left=2pt, right=2pt]
+        \begin{align*}
+          \mathcal{L}_{AE} = \|x - g(f(x))\|^2
+        \end{align*}
+      \end{tcolorbox}
+      
+      \textbf{VAE:}
+      \vspace{-0.2cm}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm, boxsep=2pt, left=2pt, right=2pt]
+        \begin{align*}
+          \mathcal{L}_{VAE} = \|x - \hat{x}\|^2 + \beta D_{KL}
+        \end{align*}
+      \end{tcolorbox}
+      
+      \textbf{Conditional VAE:}
+      \vspace{-0.2cm}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm, boxsep=2pt, left=2pt, right=2pt]
+        \begin{align*}
+          \mathcal{L}_{CVAE} = \|x - \hat{x}\|^2 + \beta D_{KL}(q(z|x,y) \| p(z|y))
+        \end{align*}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.3\textwidth}
+      \textbf{VQ-VAE:}
+      \vspace{-0.2cm}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm, boxsep=2pt, left=2pt, right=2pt]
+        \begin{align*}
+          \mathcal{L}_{VQ} &= \|x - \hat{x}\|^2 + \\
+          &\|sg[z_e] - e\|^2 + \\
+          &\beta\|z_e - sg[e]\|^2
+        \end{align*}
+      \end{tcolorbox}
+      
+      \textbf{GAN:}
+      \vspace{-0.2cm}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm, boxsep=2pt, left=2pt, right=2pt]
+        \begin{align*}
+          \min_G \max_D V(D,G) &= \mathbb{E}_{x}[\log D(x)] \\
+          &+ \mathbb{E}_{z}[\log(1 - D(G(z)))]
+        \end{align*}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \textbf{Diffusion:}
+      \vspace{-0.2cm}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm, boxsep=2pt, left=2pt, right=2pt]
+        \begin{align*}
+          \mathcal{L} = \mathbb{E}_{t,x_0,\epsilon} \left[ \|\epsilon - \epsilon_\theta(x_t, t)\|^2 \right]
+        \end{align*}
+      \end{tcolorbox}
+      
+      \medskip
+      \textbf{Złożoność obliczeniowa:}
+      \begin{itemize}
+        \item \textbf{Trening:} Diffusion $>$ GAN $>$ VQ-VAE $>$ CVAE $>$ VAE $>$ AE
+        \item \textbf{Próbkowanie:} Diffusion $\gg$ VQ-VAE $>$ GAN $>$ CVAE $\approx$ VAE $\approx$ AE
+      \end{itemize}
+      
+      \textbf{Jakość generowanych próbek:}
+      \begin{itemize}
+        \item Diffusion $>$ GAN $>$ VQ-VAE $>$ CVAE $>$ VAE $>$ AE
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 % --- WYZWANIA I PRZYKŁADY ---
 
 \section{Wyzwania implementacyjne}
@@ -320,10 +744,54 @@
     \item \textbf{Dobór architektury:} Liczba warstw, liczba neuronów, funkcje aktywacji
     \item \textbf{Dobór wymiarowości przestrzeni latentnej:} Zbyt mała - utrata informacji, zbyt duża - brak generalizacji
     \item \textbf{Balansowanie funkcji straty:} Np. w VAE balans między rekonstrukcją a regularyzacją KL
+    \begin{align*}
+      \mathcal{L}_{VAE}(\beta) = \|x - \hat{x}\|^2 + \beta \cdot D_{KL}
+    \end{align*}
     \item \textbf{Stabilność treningu:} Szczególnie w przypadku GAN-ów
+    \begin{align*}
+      \mathcal{L}_D &= -\mathbb{E}_x[\log D(x)] - \mathbb{E}_z[\log(1 - D(G(z)))] \\
+      \mathcal{L}_G &= -\mathbb{E}_z[\log D(G(z))]
+    \end{align*}
     \item \textbf{Efektywność obliczeniowa:} Modele dyfuzji wymagają wielu kroków podczas generowania
     \item \textbf{Ocena jakości wygenerowanych próbek:} Metody ilościowe vs jakościowe
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Kompromisy w modelowaniu}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Rekonstrukcja vs różnorodność:}
+      \begin{itemize}
+        \item W VAE: $\beta$-VAE
+        \begin{align*}
+          \mathcal{L}_{\beta\text{-VAE}} = \|x - \hat{x}\|^2 + \beta \cdot D_{KL}
+        \end{align*}
+        \item $\beta < 1$: lepsza rekonstrukcja
+        \item $\beta > 1$: większa regularyzacja, lepsze generowanie
+      \end{itemize}
+      
+      \textbf{Rate-distortion trade-off:}
+      \begin{align*}
+        \mathcal{L} = \text{Rate} + \beta \cdot \text{Distortion}
+      \end{align*}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Wymiar przestrzeni latentnej:}
+      \begin{itemize}
+        \item Mały wymiar $\rightarrow$ silna kompresja, ale utrata szczegółów
+        \item Duży wymiar $\rightarrow$ lepsza rekonstrukcja, ale słabsza generalizacja
+      \end{itemize}
+      
+      \textbf{Harmonogram szumu w Diffusion:}
+      \begin{align*}
+        \beta_1, \beta_2, \ldots, \beta_T
+      \end{align*}
+      \begin{itemize}
+        \item Liniowy vs nieliniowy
+        \item Wpływ na jakość generowania
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \section{Przykłady zastosowań}
@@ -334,17 +802,34 @@
       \textbf{Generowanie danych syntetycznych:}
       \begin{itemize}
         \item Augmentacja danych w uczeniu maszynowym
+        \begin{align*}
+          \mathcal{D}_{aug} = \mathcal{D} \cup \{G(z_i) | z_i \sim p(z)\}_{i=1}^N
+        \end{align*}
         \item Syntetyczne dane dla trenowania innych modeli
         \item Generowanie przykładów do zastosowań edukacyjnych
       \end{itemize}
+      
+      \textbf{Matematycznie:}
+      \begin{align*}
+        p_{model}(x) \approx p_{data}(x)
+      \end{align*}
     \end{column}
     \begin{column}{0.5\textwidth}
       \textbf{Zastosowania praktyczne:}
       \begin{itemize}
         \item Transfer stylu pisma
+        \begin{align*}
+          \hat{x} = g(f(x_{style}), y_{content})
+        \end{align*}
         \item Uzupełnianie brakujących fragmentów
+        \begin{align*}
+          \hat{x}_{full} = \arg\max_x p(x | x_{observed})
+        \end{align*}
         \item Korekta i poprawa pisma odręcznego
         \item Konwersja cyfr między różnymi stylami
+        \begin{align*}
+          x_{target} = g(f(x_{source}), y_{target})
+        \end{align*}
       \end{itemize}
     \end{column}
   \end{columns}
