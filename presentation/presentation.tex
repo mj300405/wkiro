@@ -110,6 +110,7 @@
     \textbf{Bibliografia:} \cite{hinton2006reducing}
     \end{column}
     \begin{column}{0.4\textwidth}
+    \centering
     \begin{tikzpicture}[scale=0.6, transform shape]
     \node[block] (input) at (0,0) {Wejście};
     \node[block, below=0.8cm of input] (enc) {Enkoder};
@@ -129,6 +130,7 @@
 \begin{frame}{Autoencoder - Funkcja straty (1/2)}
   \begin{columns}
     \begin{column}{0.5\textwidth}
+      \centering
       \begin{tikzpicture}[scale=0.6, transform shape]
         \node[block] (input) at (0,0) {$x$};
         \node[block, below=0.8cm of input] (enc) {Enkoder $f(x)$};
@@ -201,6 +203,7 @@
     \textbf{Bibliografia:} \cite{kingma2013auto}
     \end{column}
     \begin{column}{0.4\textwidth}
+    \centering
     \begin{tikzpicture}[scale=0.6, transform shape]
     \node[block] (input) at (0,0) {Wejście};
     \node[block, below=0.8cm of input] (enc) {Enkoder};
@@ -220,6 +223,7 @@
 \begin{frame}{Wariacyjny Autoencoder (VAE) - Funkcja straty (1/2)}
   \begin{columns}
     \begin{column}{0.5\textwidth}
+      \centering
       \begin{tikzpicture}[scale=0.6, transform shape]
         \node[block] (input) at (0,0) {$x$};
         \node[block, below=0.8cm of input] (enc) {Enkoder};
@@ -296,6 +300,7 @@
     \textbf{Bibliografia:} \cite{sohn2015learning}
     \end{column}
     \begin{column}{0.4\textwidth}
+    \centering
     \begin{tikzpicture}[scale=0.6, transform shape]
     \node[block] (input) at (0,0) {Wejście + klasa};
     \node[block, below=0.8cm of input] (enc) {Enkoder};
@@ -315,6 +320,7 @@
 \begin{frame}{Conditional VAE - Funkcja straty (1/2)}
   \begin{columns}
     \begin{column}{0.5\textwidth}
+      \centering
       \begin{tikzpicture}[scale=0.55, transform shape]
         \node[block] (input) at (0,0) {$x$};
         \node[block, right=0.6cm of input] (cond) {$y$ (etykieta)};
@@ -403,6 +409,7 @@
     \textbf{Bibliografia:} \cite{van2017neural}
     \end{column}
     \begin{column}{0.4\textwidth}
+    \centering
     \begin{tikzpicture}[scale=0.6, transform shape]
     \node[block] (input) at (0,0) {Wejście};
     \node[block, below=0.8cm of input] (enc) {Enkoder};
@@ -505,12 +512,13 @@
     \textbf{Bibliografia:} \cite{goodfellow2014generative}
     \end{column}
     \begin{column}{0.4\textwidth}
+    \centering
     \begin{tikzpicture}[scale=0.6, transform shape]
     \node[block] (noise) at (0,0) {Szum};
     \node[block, below=0.8cm of noise] (gen) {Generator};
     \node[block, below=0.8cm of gen] (img) {Obraz};
     \node[block, below=0.8cm of img] (disc) {Dyskryminator};
-    \node[block, below=0.8cm of disc] (result) {P/F};
+    \node[block, below=0.8cm of disc] (result) {Prawdziwy/ Fałszywy};
     
     \draw[->, thick] (noise) -- (gen);
     \draw[->, thick] (gen) -- (img);
@@ -634,6 +642,7 @@
     \textbf{Bibliografia:} \cite{ho2020denoising}
     \end{column}
     \begin{column}{0.4\textwidth}
+    \centering
     \begin{tikzpicture}[scale=0.55, transform shape]
     \node[block] (xt) at (0,0) {$x_T$ (szum)};
     \node[block, below=0.6cm of xt] (dots1) {$\cdots$};
@@ -652,6 +661,7 @@
 \begin{frame}{Diffusion Model - Funkcje straty (1/2)}
   \begin{columns}
     \begin{column}{0.5\textwidth}
+      \centering
       \begin{tikzpicture}[scale=0.5, transform shape]
         \node[block] (x0) at (0,0) {$x_0$ (obraz)};
         \node[block, below=0.6cm of x0] (x1) {$x_1$};
@@ -771,6 +781,7 @@
       \end{enumerate}
     \end{column}
     \begin{column}{0.5\textwidth}
+      \centering
       \begin{tikzpicture}[scale=0.5, transform shape]
         \node[block] (xT) at (0,0) {$x_T \sim \mathcal{N}(0,I)$};
         \node[block, below=0.6cm of xT] (dots1) {$x_{T-1}$};
@@ -785,6 +796,7 @@
       \end{tikzpicture}
       
       \medskip
+      \raggedright
       \textbf{Kluczowe równanie:}
       \begin{align*}
         \mu_\theta(x_t, t) = \frac{1}{\sqrt{\alpha_t}} \left( x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}} \epsilon_\theta(x_t, t) \right)
