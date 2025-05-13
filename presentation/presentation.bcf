@@ -2363,10 +2363,9 @@
   <bcf:section number="0">
     <bcf:citekey order="1" intorder="1">hinton2006reducing</bcf:citekey>
     <bcf:citekey order="2" intorder="1">kingma2013auto</bcf:citekey>
-    <bcf:citekey order="3" intorder="1">sohn2015learning</bcf:citekey>
-    <bcf:citekey order="4" intorder="1">van2017neural</bcf:citekey>
-    <bcf:citekey order="5" intorder="1">goodfellow2014generative</bcf:citekey>
-    <bcf:citekey order="6" intorder="1">ho2020denoising</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">van2017neural</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">goodfellow2014generative</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">ho2020denoising</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

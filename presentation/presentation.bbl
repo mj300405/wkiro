@@ -210,40 +210,6 @@
       \field{pages}{6306\bibrangedash 6315}
       \range{pages}{10}
     \endentry
-    \entry{sohn2015learning}{inproceedings}{}
-      \name{author}{3}{}{%
-        {{hash=bcd831d016f1c84fc5f1ac9744284515}{%
-           family={Sohn},
-           familyi={S\bibinitperiod},
-           given={Kihyuk},
-           giveni={K\bibinitperiod}}}%
-        {{hash=ba676e881344787363f4b7380db5d34d}{%
-           family={Yan},
-           familyi={Y\bibinitperiod},
-           given={Xinchen},
-           giveni={X\bibinitperiod}}}%
-        {{hash=d09ea8631bf43468107b5ef02c5195aa}{%
-           family={Lee},
-           familyi={L\bibinitperiod},
-           given={Honglak},
-           giveni={H\bibinitperiod}}}%
-      }
-      \strng{namehash}{c04e430bac5d57ee0c6574e3ac9bdcff}
-      \strng{fullhash}{c04e430bac5d57ee0c6574e3ac9bdcff}
-      \strng{bibnamehash}{c04e430bac5d57ee0c6574e3ac9bdcff}
-      \strng{authorbibnamehash}{c04e430bac5d57ee0c6574e3ac9bdcff}
-      \strng{authornamehash}{c04e430bac5d57ee0c6574e3ac9bdcff}
-      \strng{authorfullhash}{c04e430bac5d57ee0c6574e3ac9bdcff}
-      \field{sortinit}{S}
-      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{booktitle}{Advances in neural information processing systems}
-      \field{title}{Learning structured output representation using deep conditional generative models}
-      \field{year}{2015}
-      \field{pages}{3483\bibrangedash 3491}
-      \range{pages}{9}
-    \endentry
   \enddatalist
 \endrefsection
 \endinput

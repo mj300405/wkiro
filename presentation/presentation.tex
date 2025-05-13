@@ -9,6 +9,7 @@
 \usepackage{hyperref}
 \usepackage{biblatex}
 \usepackage{amsmath, amssymb}
+\usepackage{caption}
 \addbibresource{references.bib}
 
 % Global font settings
@@ -83,6 +84,55 @@
   \begin{block}{Rozważane warianty}
     Klasyczny autoencoder, wariacyjny autoencoder (VAE), GAN, Diffusion, VQ-VAE, Conditional VAE
   \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Zbiór danych MNIST}
+  
+  \textbf{Charakterystyka zbioru MNIST:}
+  \begin{itemize}
+      \item Standardowy zbiór danych do rozpoznawania odręcznie pisanych cyfr
+      \item 60 000 obrazów treningowych
+      \item 10 000 obrazów testowych
+      \item Obrazy czarno-białe o wymiarach 28 $\times$ 28 pikseli
+      \item 10 klas (cyfry od 0 do 9)
+      \item Każdy piksel reprezentowany jako wartość od 0 (biały) do 255 (czarny)
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{img/mnist_example.png}\\
+    \captionof{figure}{Przykładowe cyfry ze zbioru MNIST}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dlaczego MNIST?}
+  
+  \begin{columns}[T]
+  \begin{column}{0.6\textwidth}
+      \textbf{Zalety zbioru MNIST:}
+      \begin{itemize}
+          \item Idealny do demonstracji modeli generatywnych ze względu na prostotę
+          \item Pozwala na szybkie eksperymenty (mała rozdzielczość obrazów)
+          \item Łatwa interpretacja wyników (ludzie bez trudu rozpoznają cyfry)
+          \item Umożliwia bezpośrednie porównanie z wynikami z literatury
+      \end{itemize}
+  \end{column}
+  
+  \begin{column}{0.4\textwidth}
+      \vspace{0.5cm}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+          \centering
+          \textbf{Balans między:}
+          \begin{itemize}
+              \item Złożonością modelu
+              \item Czasem treningu
+              \item Jakością wyników
+          \end{itemize}
+      \end{tcolorbox}
+  \end{column}
+  \end{columns}
 \end{frame}
 
 % --- MODELE ---
@@ -226,110 +276,13 @@
       \centering
       \begin{tikzpicture}[scale=0.6, transform shape]
         \node[block] (input) at (0,0) {$x$};
-        \node[block, below=0.8cm of input] (enc) {Enkoder};
-        \node[block, below=0.8cm of enc] (params) {$\mu(x), \sigma(x)$};
-        \node[block, below=0.8cm of params] (sample) {$z \sim \mathcal{N}(\mu(x), \sigma^2(x))$};
-        \node[block, below=0.8cm of sample] (dec) {Dekoder};
-        \node[block, below=0.8cm of dec] (output) {$\hat{x} = g(z)$};
-        
-        \draw[->, thick] (input) -- (enc);
-        \draw[->, thick] (enc) -- (params);
-        \draw[->, thick] (params) -- (sample);
-        \draw[->, thick] (sample) -- (dec);
-        \draw[->, thick] (dec) -- (output);
-      \end{tikzpicture}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{Struktura VAE:}
-      \medskip
-      Wariacyjny Autoencoder modeluje rozkład latentny poprzez parametry $\mu$ i $\sigma$, co pozwala na próbkowanie $z$ z rozkładu normalnego.
-      
-      \medskip
-      Proces obejmuje kodowanie danych wejściowych $x$ do przestrzeni latentnej oraz dekodowanie do rekonstrukcji $\hat{x}$.
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Wariacyjny Autoencoder (VAE) - Funkcja straty (2/2)}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
-        \begin{align*}
-          \mathcal{L}_{VAE} &= \underbrace{\|x - \hat{x}\|^2}_{\text{Rekonstrukcja}} + \\
-          &\underbrace{\beta \cdot D_{KL}(q(z|x) \| p(z))}_{\text{Regularyzacja KL}}
-        \end{align*}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{Objaśnienie funkcji straty:}
-      \medskip
-      gdzie:
-      \begin{itemize}
-        \item $q(z|x) = \mathcal{N}(z; \mu(x), \sigma^2(x))$ - kodowanie
-        \item $p(z) = \mathcal{N}(z; 0, I)$ - rozkład a priori
-        \item $\beta$ - waga regularyzacji KL
-      \end{itemize}
-      
-      \medskip
-      Dla rozkładu normalnego, dywergencja KL wynosi:
-      \begin{align*}
-        D_{KL} = \frac{1}{2}\sum_{j=1}^{d}(1 + \log \sigma_j^2 - \mu_j^2 - \sigma_j^2)
-      \end{align*}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% CONDITIONAL VAE
-\begin{frame}{Conditional VAE}
-  \begin{columns}
-    \begin{column}{0.6\textwidth}
-    \textbf{Conditional VAE} (CVAE) to wariacyjny autoencoder, który dodatkowo warunkuje generowanie na zadanej klasie (np. cyfra).
-    
-    \medskip
-    \textbf{Kluczowe cechy:}
-    \begin{itemize}
-    \item Warunkowanie generowania na etykietach
-    \item Możliwość sterowania procesem generacji
-    \item Łączenie etykiet z danymi wejściowymi
-    \end{itemize}
-    
-    \textbf{Zalety:} kontrola nad generowanymi danymi, elastyczność
-    
-    \textbf{Wady:} większa złożoność, wymaga etykiet
-    
-    \textbf{Bibliografia:} \cite{sohn2015learning}
-    \end{column}
-    \begin{column}{0.4\textwidth}
-    \centering
-    \begin{tikzpicture}[scale=0.6, transform shape]
-    \node[block] (input) at (0,0) {Wejście + klasa};
-    \node[block, below=0.8cm of input] (enc) {Enkoder};
-    \node[block, below=0.8cm of enc] (mu) {$\mu$, $\sigma$};
-    \node[block, below=0.8cm of mu] (dec) {Dekoder};
-    \node[block, below=0.8cm of dec] (output) {Wyjście};
-    
-    \draw[->, thick] (input) -- (enc);
-    \draw[->, thick] (enc) -- (mu);
-    \draw[->, thick] (mu) -- (dec);
-    \draw[->, thick] (dec) -- (output);
-    \end{tikzpicture}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Conditional VAE - Funkcja straty (1/2)}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      \centering
-      \begin{tikzpicture}[scale=0.55, transform shape]
-        \node[block] (input) at (0,0) {$x$};
         \node[block, right=0.6cm of input] (cond) {$y$ (etykieta)};
         \node[block, below=0.8cm of input] (concat1) {Konkatenacja};
         \draw[->, thick] (input) -- (concat1);
         \draw[->, thick] (cond) -- (concat1);
         
         \node[block, below=0.8cm of concat1] (enc) {Enkoder};
-        \node[block, below=0.8cm of enc] (params) {$\mu(x,y), \sigma(x,y)$};
+        \node[block, below=0.8cm of enc] (params) {$\mu(x), \sigma(x)$};
         \node[block, below=0.8cm of params] (sample) {$z \sim \mathcal{N}(\mu, \sigma^2)$};
         
         \node[block, below=0.8cm of sample] (concat2) {Konkatenacja};

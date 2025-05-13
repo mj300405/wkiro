@@ -1,13 +1,13 @@
 # Fdb version 4
-["biber presentation"] 1747177012.52814 "presentation.bcf" "presentation.bbl" "presentation" 1747177311.26573 0
-  "presentation.bcf" 1747177311.17193 108130 feb6909440bd32a545d72f52e360809e "pdflatex"
+["biber presentation"] 1747178279.61629 "presentation.bcf" "presentation.bbl" "presentation" 1747178284.55242 0
+  "presentation.bcf" 1747178284.45231 108059 73b1f7a5038970c6b03017e76a78a311 "pdflatex"
   "references.bib" 1746872518.63245 1650 25cfa4d72c83c14ad5843727e1bb1774 ""
   (generated)
   "presentation.bbl"
   "presentation.blg"
   (rewritten before read)
-["pdflatex"] 1747177309.66981 "/Users/michal/Desktop/wkiro/presentation/presentation.tex" "presentation.pdf" "presentation" 1747177311.26592 0
-  "/Users/michal/Desktop/wkiro/presentation/presentation.tex" 1747177309.48223 33084 00dc0bec7df7b36f35e73e2ea9da0045 ""
+["pdflatex"] 1747178282.89375 "/Users/michal/Desktop/wkiro/presentation/presentation.tex" "presentation.pdf" "presentation" 1747178284.55262 0
+  "/Users/michal/Desktop/wkiro/presentation/presentation.tex" 1747178277.4205 31111 11ed8c4d4863a38862a7d217b4d13ef4 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1202520719 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1202520719 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
@@ -220,6 +220,9 @@
   "/usr/local/texlive/2024/texmf-dist/tex/latex/biblatex/blx-dm.def" 1643926307 32455 8d3e554836db11aab80a8e11be62e1b1 ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/biblatex/cbx/numeric.cbx" 1678141846 4629 cda468e8a0b1cfa0f61872e171037a4b ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/biblatex/lbx/polish.lbx" 1643926307 32796 904bd909bb0aa146548063bdae16b058 ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/caption/caption-beamer.sto" 1645391520 4350 a9295a4610cd29113396b45a37d92606 ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/caption/caption.sty" 1696191071 56128 c2ccf1a29d78c33bc553880402e4fb9a ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/caption/caption3.sty" 1696191071 72619 ee90b6612147680fd73c3b1406a74245 ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/environ/environ.sty" 1399239813 4378 f429f0da968c278653359293040a8f52 ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty" 1579991033 13886 d1306dcf79a944f6988e688c1785f9ce ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/etoolbox/etoolbox.sty" 1601931149 46845 3b58f70c6e861a13d927bff09d35ecbc ""
@@ -286,13 +289,14 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1739978418.36282 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1739978355 8221423 7cad87215b59a958b8e3d1bf38bc274b ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "presentation.aux" 1747177311.16989 6546 de7dd3463bae1aef578c6ef1a708cc7f "pdflatex"
-  "presentation.bbl" 1747177013.87496 9891 43198fca78e605e2b997058a70e3dbf9 "biber presentation"
-  "presentation.nav" 1747177311.17246 3618 26045280051da90353a4fefb7e54c01e "pdflatex"
-  "presentation.out" 1747177311.17126 628 7ef124cd70bac6373fc15a4f3e67c265 "pdflatex"
-  "presentation.run.xml" 1747177311.1724 2360 27928670e8f9576d6e0d0f486e7c804b "pdflatex"
-  "presentation.tex" 1747177309.48223 33084 00dc0bec7df7b36f35e73e2ea9da0045 ""
-  "presentation.toc" 1747177311.17248 246 7ebe18db19cbf939c28a884e704d3e29 "pdflatex"
+  "img/mnist_example.png" 1747177824.24412 66198 b83c091093f6d90c1ffe8298704fef6c ""
+  "presentation.aux" 1747178284.45036 6139 a668f9b28d5a970f31618bf9563c2061 "pdflatex"
+  "presentation.bbl" 1747178281.2077 8453 09342476785c27ef8f10ad6eae445217 "biber presentation"
+  "presentation.nav" 1747178284.45286 3431 fc837c9154b0f230769ce46ab42d0466 "pdflatex"
+  "presentation.out" 1747178284.45156 628 7ef124cd70bac6373fc15a4f3e67c265 "pdflatex"
+  "presentation.run.xml" 1747178284.45281 2360 27928670e8f9576d6e0d0f486e7c804b "pdflatex"
+  "presentation.tex" 1747178277.4205 31111 11ed8c4d4863a38862a7d217b4d13ef4 ""
+  "presentation.toc" 1747178284.45288 246 a8112f1685842f0b165e69641a8d3a94 "pdflatex"
   (generated)
   "presentation.aux"
   "presentation.bcf"
