@@ -50,29 +50,27 @@
 \headcommand {\sectionentry {2}{Porównanie modeli}{23}{Porównanie modeli}{0}}
 \headcommand {\slideentry {2}{0}{1}{23/23}{}{0}}
 \headcommand {\beamer@framepages {23}{23}}
-\headcommand {\slideentry {2}{0}{2}{24/24}{}{0}}
+\headcommand {\beamer@sectionpages {23}{23}}
+\headcommand {\beamer@subsectionpages {23}{23}}
+\headcommand {\sectionentry {3}{Wyzwania implementacyjne}{24}{Wyzwania implementacyjne}{0}}
+\headcommand {\slideentry {3}{0}{1}{24/24}{}{0}}
 \headcommand {\beamer@framepages {24}{24}}
-\headcommand {\beamer@sectionpages {23}{24}}
-\headcommand {\beamer@subsectionpages {23}{24}}
-\headcommand {\sectionentry {3}{Wyzwania implementacyjne}{25}{Wyzwania implementacyjne}{0}}
-\headcommand {\slideentry {3}{0}{1}{25/25}{}{0}}
+\headcommand {\slideentry {3}{0}{2}{25/25}{}{0}}
 \headcommand {\beamer@framepages {25}{25}}
-\headcommand {\slideentry {3}{0}{2}{26/26}{}{0}}
+\headcommand {\beamer@sectionpages {24}{25}}
+\headcommand {\beamer@subsectionpages {24}{25}}
+\headcommand {\sectionentry {4}{Przykłady zastosowań}{26}{Przykłady zastosowań}{0}}
+\headcommand {\slideentry {4}{0}{1}{26/26}{}{0}}
 \headcommand {\beamer@framepages {26}{26}}
-\headcommand {\beamer@sectionpages {25}{26}}
-\headcommand {\beamer@subsectionpages {25}{26}}
-\headcommand {\sectionentry {4}{Przykłady zastosowań}{27}{Przykłady zastosowań}{0}}
-\headcommand {\slideentry {4}{0}{1}{27/27}{}{0}}
+\headcommand {\beamer@sectionpages {26}{26}}
+\headcommand {\beamer@subsectionpages {26}{26}}
+\headcommand {\sectionentry {5}{Bibliografia}{27}{Bibliografia}{0}}
+\headcommand {\slideentry {5}{0}{0}{27/27}{}{0}}
 \headcommand {\beamer@framepages {27}{27}}
-\headcommand {\beamer@sectionpages {27}{27}}
-\headcommand {\beamer@subsectionpages {27}{27}}
-\headcommand {\sectionentry {5}{Bibliografia}{28}{Bibliografia}{0}}
-\headcommand {\slideentry {5}{0}{0}{28/28}{}{0}}
-\headcommand {\beamer@framepages {28}{28}}
-\headcommand {\slideentry {5}{0}{0}{28/29}{}{0}}
-\headcommand {\beamer@framepages {28}{29}}
-\headcommand {\beamer@partpages {1}{29}}
-\headcommand {\beamer@subsectionpages {27}{29}}
-\headcommand {\beamer@sectionpages {27}{29}}
-\headcommand {\beamer@documentpages {29}}
-\headcommand {\gdef \inserttotalframenumber {29}}
+\headcommand {\slideentry {5}{0}{0}{27/28}{}{0}}
+\headcommand {\beamer@framepages {27}{28}}
+\headcommand {\beamer@partpages {1}{28}}
+\headcommand {\beamer@subsectionpages {26}{28}}
+\headcommand {\beamer@sectionpages {26}{28}}
+\headcommand {\beamer@documentpages {28}}
+\headcommand {\gdef \inserttotalframenumber {28}}
