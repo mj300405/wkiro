@@ -1,0 +1,272 @@
+% !TeX program = pdflatex
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, decorations.pathreplacing, calc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{biblatex}
+\usepackage{amsmath, amssymb}
+\usepackage{caption}
+\addbibresource{references.bib}
+
+% Global font settings
+\usepackage{lmodern}  % Latin Modern font
+\usefonttheme{professionalfonts}  % Use professional fonts
+\setbeamerfont{title}{size=\large,series=\bfseries}
+\setbeamerfont{frametitle}{size=\normalsize,series=\bfseries}
+\setbeamerfont{normal text}{size=\small}
+
+% Theme and colors
+\usetheme{Madrid}
+\usecolortheme{dolphin}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+% Diagram styles
+\tikzset{
+  block/.style={
+    draw,
+    rectangle,
+    rounded corners,
+    minimum width=2cm,
+    minimum height=1cm,
+    align=center,
+    fill=blue!10
+  },
+  annotation/.style={
+    draw=red,
+    thick,
+    -Stealth
+  }
+}
+
+% Formula environment
+\newenvironment{formula}{%
+  \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm, boxsep=3pt]%
+}{%
+  \end{tcolorbox}%
+}
+
+% Add tcolorbox package
+\usepackage{tcolorbox}
+
+\title{Podsumowanie wyników modeli generatywnych}
+\subtitle{Analiza porównawcza różnych architektur}
+\author{Jakub Barylak, Michał Jagoda, Piotr Marcol}
+\institute{Politechnika Śląska}
+\date{Maj 2025}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Plan prezentacji}
+  \tableofcontents
+\end{frame}
+
+\section{Przegląd zaimplementowanych modeli}
+
+\begin{frame}{Zaimplementowane modele}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{Podstawowe modele:}
+      \begin{itemize}
+        \item Klasyczny Autoencoder
+        \item Wariacyjny Autoencoder (VAE)
+        \item Conditional VAE
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Zaawansowane modele:}
+      \begin{itemize}
+        \item Generative Adversarial Network (GAN)
+        \item Vector Quantized VAE (VQ-VAE)
+        \item Diffusion Model
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Wyniki i metryki}
+
+\begin{frame}{Metryki oceny}
+  \begin{block}{Wykorzystane metryki}
+    \begin{itemize}
+      \item \textbf{Basic AE:} Binary Cross Entropy (BCE)
+      \item \textbf{VAE:} 
+        \begin{itemize}
+          \item Reconstruction loss (BCE)
+          \item KL divergence
+        \end{itemize}
+      \item \textbf{Conditional VAE:}
+        \begin{itemize}
+          \item Reconstruction loss
+          \item KL divergence
+          \item Conditional generation quality
+        \end{itemize}
+      \item \textbf{GAN:}
+        \begin{itemize}
+          \item Generator loss
+          \item Discriminator loss
+        \end{itemize}
+      \item \textbf{VQ-VAE:}
+        \begin{itemize}
+          \item Reconstruction loss
+          \item VQ loss (commitment cost)
+        \end{itemize}
+      \item \textbf{Diffusion:}
+        \begin{itemize}
+          \item Denoising loss
+          \item Sampling quality
+        \end{itemize}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Porównanie modeli}
+  \begin{columns}[T]
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+        \item \textbf{Autoencoder:}
+          \begin{itemize}
+            \item Najszybszy trening
+            \item Najprostsza implementacja
+            \item Ograniczona jakość generowanych próbek
+            \item BCE loss jako metryka rekonstrukcji
+          \end{itemize}
+        \item \textbf{VAE:}
+          \begin{itemize}
+            \item Lepsza jakość generowanych próbek
+            \item Możliwość interpolacji w przestrzeni latentnej
+            \item Stabilny trening
+            \item Balans między rekonstrukcją a KL divergence
+          \end{itemize}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{itemize}
+        \item \textbf{GAN:}
+          \begin{itemize}
+            \item Najlepsza jakość wizualna
+            \item Trudny trening
+            \item Problem z mode collapse
+            \item Wymaga balansu między generatorem a dyskryminatorem
+          \end{itemize}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Zaawansowane modele}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{Conditional VAE:}
+      \begin{itemize}
+        \item Kontrolowane generowanie cyfr
+        \item Interpolacja między cyframi
+        \item Lepsza jakość niż standardowy VAE
+        \item Wymaga etykiet podczas treningu
+      \end{itemize}
+      
+      \textbf{VQ-VAE:}
+      \begin{itemize}
+        \item Dyskretna przestrzeń latentna
+        \item Wizualizacja codebooka
+        \item Dobre kompresja z zachowaniem jakości
+        \item Możliwość interpolacji
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Diffusion Model:}
+      \begin{itemize}
+        \item Progresywne generowanie
+        \item Wysoka jakość próbek
+        \item Długi czas generowania
+        \item Stabilny proces treningu
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Wizualizacje i przykłady}
+
+\begin{frame}{Przykłady generowanych cyfr}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \centering
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \centering
+        \textbf{Przykładowe wygenerowane cyfry}
+        \begin{itemize}
+          \item Basic AE: Rekonstrukcja cyfr
+          \item VAE: Generowanie nowych cyfr
+          \item GAN: Wysokiej jakości próbki
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \centering
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \centering
+        \textbf{Interpolacja w przestrzeni latentnej}
+        \begin{itemize}
+          \item VAE: Płynne przejścia
+          \item Conditional VAE: Interpolacja między cyframi
+          \item GAN: Manipulacja cechami
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Wnioski i przyszłe kierunki}
+
+\begin{frame}{Główne wnioski}
+  \begin{block}{Najważniejsze obserwacje}
+    \begin{itemize}
+      \item VAE i GAN osiągnęły najlepsze wyniki w generowaniu cyfr
+      \item Conditional VAE pozwala na kontrolowane generowanie
+      \item Diffusion Model wymaga najdłuższego czasu treningu
+      \item VQ-VAE zapewnia dobre kompresję z zachowaniem jakości
+      \item Każdy model ma swoje unikalne zalety i zastosowania
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Kierunki rozwoju}
+  \begin{columns}[T]
+    \begin{column}{0.6\textwidth}
+      \textbf{Możliwe ulepszenia:}
+      \begin{itemize}
+        \item Implementacja bardziej zaawansowanych architektur
+        \item Optymalizacja hiperparametrów
+        \item Eksperymenty z większymi zbiorami danych
+        \item Badanie wpływu różnych funkcji straty
+        \item Integracja najlepszych cech różnych modeli
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
+        \centering
+        \textbf{Perspektywy:}
+        \begin{itemize}
+          \item Zastosowania praktyczne
+          \item Integracja modeli
+          \item Nowe architektury
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \centering
+  \Huge Dziękujemy za uwagę!
+\end{frame}
+
+\end{document} 
