@@ -1,0 +1,267 @@
+<svg viewBox="0 0 1400 700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="encoderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#2980b9;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="decoderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#c0392b;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="latentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f39c12;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#e67e22;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="labelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#9b59b6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#8e44ad;stop-opacity:0.8" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1400" height="700" fill="#fff"/>
+  
+  <!-- Title -->
+  <text x="700" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2c3e50">
+    Conditional VAE: Architecture with Label Conditioning
+  </text>
+  
+  <!-- Input Image -->
+  <g transform="translate(50, 130)">
+    <rect x="0" y="0" width="80" height="80" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Input</text>
+    <text x="40" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">28×28×1</text>
+    <text x="40" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#34495e">MNIST</text>
+  </g>
+  
+  <!-- Class Label Input -->
+  <!-- Moved to be under embedding box above -->
+  
+  <!-- Label Embedding -->
+  <g transform="translate(470, 220)">
+    <rect x="0" y="0" width="80" height="50" fill="url(#labelGrad)" stroke="#8e44ad" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Embedding</text>
+    <text x="40" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">10→32</text>
+  </g>
+  
+  <!-- Class Label Input positioned under embedding -->
+  <g transform="translate(470, 280)">
+    <rect x="0" y="0" width="80" height="50" fill="url(#labelGrad)" stroke="#8e44ad" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Label</text>
+    <text x="40" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">0-9</text>
+  </g>
+  
+  <!-- Encoder Section -->
+  <text x="320" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2980b9">Encoder</text>
+  
+  <!-- Conv Layer 1 -->
+  <g transform="translate(160, 120)">
+    <rect x="0" y="0" width="70" height="100" fill="url(#encoderGrad)" stroke="#2980b9" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="35" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Conv2d</text>
+    <text x="35" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">1→32</text>
+    <text x="35" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">k=4,s=2</text>
+    <text x="35" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">14×14</text>
+    <text x="35" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">BatchNorm</text>
+    <text x="35" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">ReLU</text>
+  </g>
+  
+  <!-- Conv Layer 2 -->
+  <g transform="translate(250, 130)">
+    <rect x="0" y="0" width="70" height="80" fill="url(#encoderGrad)" stroke="#2980b9" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="35" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Conv2d</text>
+    <text x="35" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">32→64</text>
+    <text x="35" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">k=4,s=2</text>
+    <text x="35" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">7×7</text>
+  </g>
+  
+  <!-- Conv Layer 3 -->
+  <g transform="translate(340, 140)">
+    <rect x="0" y="0" width="70" height="60" fill="url(#encoderGrad)" stroke="#2980b9" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="35" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Conv2d</text>
+    <text x="35" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">64→128</text>
+    <text x="35" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">k=3,s=1</text>
+  </g>
+  
+  <!-- Flatten -->
+  <g transform="translate(430, 150)">
+    <rect x="0" y="0" width="60" height="40" fill="url(#encoderGrad)" stroke="#2980b9" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Flatten</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">6272</text>
+  </g>
+  
+  <!-- Combine Inputs -->
+  <g transform="translate(510, 150)">
+    <rect x="0" y="0" width="80" height="60" fill="#34495e" stroke="#2c3e50" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Combine</text>
+    <text x="40" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">6304→6272</text>
+    <text x="40" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">ReLU</text>
+  </g>
+  
+  <!-- Latent Parameters -->
+  <g transform="translate(640, 130)">
+    <rect x="0" y="0" width="60" height="40" fill="url(#latentGrad)" stroke="#f39c12" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">μ</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">32-dim</text>
+  </g>
+  
+  <g transform="translate(640, 180)">
+    <rect x="0" y="0" width="60" height="40" fill="url(#latentGrad)" stroke="#f39c12" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">log σ²</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">32-dim</text>
+  </g>
+  
+  <!-- Reparameterization Trick -->
+  <g transform="translate(740, 140)">
+    <circle cx="30" cy="30" r="25" fill="#95a5a6" stroke="#7f8c8d" stroke-width="2" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="white">z = μ +</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">σ⊙ε</text>
+    <text x="30" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="white">ε~N(0,I)</text>
+  </g>
+  
+  <!-- Latent Space -->
+  <g transform="translate(820, 150)">
+    <rect x="0" y="0" width="80" height="40" fill="url(#latentGrad)" stroke="#f39c12" stroke-width="3" rx="8" filter="url(#shadow)"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Latent z</text>
+    <text x="40" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">32-dim</text>
+  </g>
+  
+  <!-- Label Embedding Copy for Decoder -->
+  <g transform="translate(820, 220)">
+    <rect x="0" y="0" width="80" height="50" fill="url(#labelGrad)" stroke="#8e44ad" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Embedding</text>
+    <text x="40" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">32-dim</text>
+  </g>
+  
+  <!-- Decoder Section -->
+  <text x="950" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#c0392b">Decoder</text>
+  
+  <!-- Combine Decoder Inputs -->
+  <g transform="translate(820, 150)">
+    <rect x="0" y="0" width="80" height="60" fill="#34495e" stroke="#2c3e50" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Combine</text>
+    <text x="40" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">64→6272</text>
+    <text x="40" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">ReLU</text>
+  </g>
+  
+  <!-- Reshape -->
+  <g transform="translate(920, 150)">
+    <rect x="0" y="0" width="60" height="40" fill="url(#decoderGrad)" stroke="#c0392b" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Reshape</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">128×7×7</text>
+  </g>
+  
+  <!-- Decoder Conv Layer 1 -->
+  <g transform="translate(1000, 120)">
+    <rect x="0" y="0" width="70" height="100" fill="url(#decoderGrad)" stroke="#c0392b" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="35" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="white">ConvT2d</text>
+    <text x="35" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">128→64</text>
+    <text x="35" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">k=4,s=2</text>
+    <text x="35" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">14×14</text>
+    <text x="35" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">BatchNorm</text>
+    <text x="35" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">ReLU</text>
+  </g>
+  
+  <!-- Decoder Conv Layer 2 -->
+  <g transform="translate(1090, 130)">
+    <rect x="0" y="0" width="70" height="80" fill="url(#decoderGrad)" stroke="#c0392b" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="35" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="white">ConvT2d</text>
+    <text x="35" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">64→32</text>
+    <text x="35" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">k=4,s=2</text>
+    <text x="35" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">28×28</text>
+  </g>
+  
+  <!-- Final Conv -->
+  <g transform="translate(1180, 140)">
+    <rect x="0" y="0" width="70" height="60" fill="url(#decoderGrad)" stroke="#c0392b" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="35" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Conv2d</text>
+    <text x="35" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">32→1</text>
+    <text x="35" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">Sigmoid</text>
+  </g>
+  
+  <!-- Output Image -->
+  <g transform="translate(1270, 130)">
+    <rect x="0" y="0" width="80" height="80" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Output</text>
+    <text x="40" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">28×28×1</text>
+    <text x="40" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#34495e">Reconstructed</text>
+  </g>
+  
+  <!-- Arrows -->
+  <!-- Input to first conv -->
+  <path d="M 135 170 L 155 170" stroke="#34495e" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Label to embedding -->
+  <!-- Updated above in combined section -->
+  
+  <!-- Between encoder convs -->
+  <path d="M 235 170 L 245 170" stroke="#2980b9" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 325 170 L 335 170" stroke="#2980b9" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 415 170 L 425 170" stroke="#2980b9" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Flatten to combine -->
+  <path d="M 495 170 L 505 170" stroke="#2980b9" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Label to embedding -->
+  <path d="M 510 280 L 510 275" stroke="#8e44ad" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Embedding to combine -->
+  <path d="M 550 245 Q 550 220 550 215" stroke="#8e44ad" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Combine to latent params -->
+  <path d="M 595 170 L 635 150" stroke="#34495e" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 595 190 L 635 200" stroke="#34495e" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Latent params to reparameterization -->
+  <path d="M 705 150 L 735 155" stroke="#f39c12" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 705 200 L 735 185" stroke="#f39c12" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Reparameterization to latent -->
+  <path d="M 785 170 L 815 170" stroke="#95a5a6" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Latent to decoder combine -->
+  <path d="M 780 170 L 815 170" stroke="#f39c12" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Label embedding to decoder combine -->
+  <path d="M 860 220 L 860 215" stroke="#8e44ad" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Decoder combine to reshape -->
+  <path d="M 905 180 L 915 170" stroke="#34495e" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Through decoder -->
+  <path d="M 985 170 L 995 170" stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 1075 170 L 1085 170" stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 1165 170 L 1175 170" stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- To output -->
+  <path d="M 1255 170 L 1265 170" stroke="#34495e" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34495e"/>
+    </marker>
+  </defs>
+  
+  <!-- Loss Function -->
+  <g transform="translate(550, 380)">
+    <rect x="0" y="0" width="350" height="100" fill="#ffffff" stroke="#95a5a6" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="175" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">VAE Loss Function</text>
+    <text x="175" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#34495e">L = BCE(x, x̂) + β·KLD(q(z|x,y) || p(z))</text>
+    <text x="175" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#7f8c8d">KLD = -½Σ(1 + log σ² - μ² - σ²)</text>
+    <text x="175" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#7f8c8d">Reconstruction Loss + Regularization</text>
+  </g>
+  
+  <!-- Architecture Details -->
+  <g transform="translate(50, 520)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Conditional VAE Features:</text>
+    <text x="0" y="25" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Conditional generation: Control output class using label embedding</text>
+    <text x="0" y="45" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Convolutional encoder: Preserves spatial structure (Conv2d + BatchNorm + ReLU)</text>
+    <text x="0" y="65" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Reparameterization trick: Enables backpropagation through stochastic sampling</text>
+    <text x="0" y="85" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Transposed convolutions: Upsampling for image reconstruction</text>
+    <text x="0" y="105" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Label conditioning: Embedded labels guide both encoding and decoding</text>
+    <text x="0" y="125" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Latent space: 32-dimensional probabilistic representation</text>
+  </g>
+</svg>

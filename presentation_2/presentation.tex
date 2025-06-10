@@ -9,8 +9,11 @@
 \usepackage{hyperref}
 \usepackage{biblatex}
 \usepackage{amsmath, amssymb}
-\usepackage{caption}
+\usepackage[justification=centering]{caption}
 \addbibresource{references.bib}
+
+\usepackage{tabularx}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
 
 % Global font settings
 \usepackage{lmodern}  % Latin Modern font
@@ -57,216 +60,373 @@
 \subtitle{Analiza porównawcza różnych architektur}
 \author{Jakub Barylak, Michał Jagoda, Piotr Marcol}
 \institute{Politechnika Śląska}
-\date{Maj 2025}
+\date{11 czerwca 2025}
 
 \begin{document}
 
 \begin{frame}
-  \titlepage
+    \titlepage
 \end{frame}
 
 \begin{frame}{Plan prezentacji}
-  \tableofcontents
+    \tableofcontents
 \end{frame}
 
-\section{Przegląd zaimplementowanych modeli}
+\section{Wprowadzenie}
+\begin{frame}{Wprowadzenie}
+    \begin{block}{Cel prezentacji}
+        Przedstawienie wyników i porównanie różnych modeli generatywnych na zbiorze danych MNIST.
+    \end{block}
+    \begin{itemize}
+        \item Analiza architektur Autoencoderów, VAE, GAN i Diffusion Model.
+        \item Porównanie jakości generowanych próbek.
+        \item Omówienie metryk oceny modeli.
+    \end{itemize}
+\end{frame}
+\section{Przegląd zaimplementowanych modeli i ich architektur}
 
 \begin{frame}{Zaimplementowane modele}
-  \begin{columns}[T]
-    \begin{column}{0.5\textwidth}
-      \textbf{Podstawowe modele:}
-      \begin{itemize}
-        \item Klasyczny Autoencoder
-        \item Wariacyjny Autoencoder (VAE)
-        \item Conditional VAE
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{Zaawansowane modele:}
-      \begin{itemize}
-        \item Generative Adversarial Network (GAN)
-        \item Vector Quantized VAE (VQ-VAE)
-        \item Diffusion Model
-      \end{itemize}
-    \end{column}
-  \end{columns}
+    \begin{block}{Podstawowe modele}
+        \begin{itemize}
+            \item \textbf{Autoencoder:} Klasyczny model do rekonstrukcji danych.
+            \item \textbf{Conditional VAE:} Wariacyjny autoencoder z warstwą warunkującą, umożliwiający generowanie danych na podstawie etykiet.
+            \item \textbf{Convolutional VAE:} Wariacyjny autoencoder z warstwami konwolucyjnymi, lepiej przystosowany do obrazów.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Zaawansowane modele}
+        \begin{itemize}
+            \item \textbf{Vector Quantized VAE (VQ-VAE):} Model łączący VAE z dyskretną przestrzenią latentną.
+            \item \textbf{Generative Adversarial Network (GAN):} Model oparty na rywalizujących sieciach neuronowych.
+            \item \textbf{Diffusion Model:} Model generatywny oparty na procesie redukcji szumu.
+        \end{itemize}
+    \end{block}
 \end{frame}
 
-\section{Wyniki i metryki}
+\begin{frame}{Architektura Autoencodera}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/autoencoder/autoencoder_diagram.png}
+        \caption{Schemat architektury Autoencodera}
+        \label{fig:autoencoder_architecture}
+    \end{figure}
+\end{frame}
 
-\begin{frame}{Metryki oceny}
-  \begin{block}{Wykorzystane metryki}
-    \begin{itemize}
-      \item \textbf{Basic AE:} Binary Cross Entropy (BCE)
-      \item \textbf{VAE:} 
+\begin{frame}{Architektura Conditional VAE}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/cond_vae/cvae_diagram.png}
+        \caption{Schemat architektury Conditional VAE}
+        \label{fig:conditional_vae_architecture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Architektura Convolutional VAE}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/conv_vae/convvae_diagram.png}
+        \caption{Schemat architektury VAE}
+        \label{fig:vae_architecture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Architektura GAN}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/gan/gan_diagram.png}
+        \caption{Schemat architektury GAN}
+        \label{fig:gan_architecture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Architektura VQ-VAE}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/vq_vae/vqvae_diagram.png}
+        \caption{Schemat architektury VQ-VAE}
+        \label{fig:vqvae_architecture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Architektura Diffusion Model}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/diffusion/diffusion_diagram.png}
+        \caption{Schemat architektury Diffusion Model}
+        \label{fig:diffusion_architecture}
+    \end{figure}
+\end{frame}
+
+\section{Wyniki eksperymentów}
+
+\begin{frame}{Wyniki eksperymentów}
+    \begin{figure}
+        \centering
+        \begin{tabularx}{\textwidth}{l|Y|Y|c|Y}
+            \hline
+            \textbf{Model}    & \textbf{Training Time} & \textbf{Convergence} \\
+            \hline
+            Autoencoder       & $\sim$4~sec            & Epoch 169            \\
+            Conditional VAE   & $\sim$13.5~sec         & Epoch 104            \\
+            Convolutional VAE & $\sim$5.5~sec          & Epoch 291            \\
+            GAN               & $\sim$23~sec           & Epoch 30             \\
+            VQ-VAE            & $\sim$5~sec            & Epoch 34             \\
+            Diffusion Model   & $\sim$18~sec           & Epoch 50             \\
+            \hline
+                              & per~epoch$^*$          &                      \\
+        \end{tabularx}
+    \end{figure}
+    \begin{block}{Early stopping}
         \begin{itemize}
-          \item Reconstruction loss (BCE)
-          \item KL divergence
+            \item Modele monitorowane pod kątem wczesnego zatrzymania na podstawie metryki rekonstrukcji.
+            \item Najlepsze wyniki osiągnięto przy minimalizacji straty rekonstrukcji.
+            \item Trening przerywany, gdy nie obserwowano poprawy przez 10 epok.
         \end{itemize}
-      \item \textbf{Conditional VAE:}
-        \begin{itemize}
-          \item Reconstruction loss
-          \item KL divergence
-          \item Conditional generation quality
-        \end{itemize}
-      \item \textbf{GAN:}
-        \begin{itemize}
-          \item Generator loss
-          \item Discriminator loss
-        \end{itemize}
-      \item \textbf{VQ-VAE:}
-        \begin{itemize}
-          \item Reconstruction loss
-          \item VQ loss (commitment cost)
-        \end{itemize}
-      \item \textbf{Diffusion:}
-        \begin{itemize}
-          \item Denoising loss
-          \item Sampling quality
-        \end{itemize}
-    \end{itemize}
-  \end{block}
+    \end{block}
+    \small{* Czas treningu mierzony na urządzeniu z Apple M4 Pro (20 rdzeni)}
 \end{frame}
 
 \begin{frame}{Porównanie modeli}
-  \begin{columns}[T]
-    \begin{column}{0.6\textwidth}
-      \begin{itemize}
-        \item \textbf{Autoencoder:}
-          \begin{itemize}
-            \item Najszybszy trening
-            \item Najprostsza implementacja
-            \item Ograniczona jakość generowanych próbek
-            \item BCE loss jako metryka rekonstrukcji
-          \end{itemize}
-        \item \textbf{VAE:}
-          \begin{itemize}
-            \item Lepsza jakość generowanych próbek
-            \item Możliwość interpolacji w przestrzeni latentnej
-            \item Stabilny trening
-            \item Balans między rekonstrukcją a KL divergence
-          \end{itemize}
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.4\textwidth}
-      \begin{itemize}
-        \item \textbf{GAN:}
-          \begin{itemize}
-            \item Najlepsza jakość wizualna
-            \item Trudny trening
-            \item Problem z mode collapse
-            \item Wymaga balansu między generatorem a dyskryminatorem
-          \end{itemize}
-      \end{itemize}
-    \end{column}
-  \end{columns}
+    \begin{columns}[T]
+        \begin{column}{0.6\textwidth}
+            \begin{itemize}
+                \item \textbf{Autoencoder:}
+                      \begin{itemize}
+                          \item Najszybszy trening
+                          \item Najprostsza implementacja
+                          \item Ograniczona jakość generowanych próbek
+                          \item BCE loss jako metryka rekonstrukcji
+                      \end{itemize}
+                \item \textbf{VAE:}
+                      \begin{itemize}
+                          \item Lepsza jakość generowanych próbek
+                          \item Możliwość interpolacji w przestrzeni latentnej
+                          \item Stabilny trening
+                          \item Balans między rekonstrukcją a KL divergence
+                      \end{itemize}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \begin{itemize}
+                \item \textbf{GAN:}
+                      \begin{itemize}
+                          \item Najlepsza jakość wizualna
+                          \item Trudny trening
+                          \item Problem z mode collapse
+                          \item Wymaga balansu między generatorem a dyskryminatorem
+                      \end{itemize}
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{Zaawansowane modele}
-  \begin{columns}[T]
-    \begin{column}{0.5\textwidth}
-      \textbf{Conditional VAE:}
-      \begin{itemize}
-        \item Kontrolowane generowanie cyfr
-        \item Interpolacja między cyframi
-        \item Lepsza jakość niż standardowy VAE
-        \item Wymaga etykiet podczas treningu
-      \end{itemize}
-      
-      \textbf{VQ-VAE:}
-      \begin{itemize}
-        \item Dyskretna przestrzeń latentna
-        \item Wizualizacja codebooka
-        \item Dobre kompresja z zachowaniem jakości
-        \item Możliwość interpolacji
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{Diffusion Model:}
-      \begin{itemize}
-        \item Progresywne generowanie
-        \item Wysoka jakość próbek
-        \item Długi czas generowania
-        \item Stabilny proces treningu
-      \end{itemize}
-    \end{column}
-  \end{columns}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \textbf{Conditional VAE:}
+            \begin{itemize}
+                \item Kontrolowane generowanie cyfr
+                \item Interpolacja między cyframi
+                \item Lepsza jakość niż standardowy VAE
+                \item Wymaga etykiet podczas treningu
+            \end{itemize}
+
+            \textbf{VQ-VAE:}
+            \begin{itemize}
+                \item Dyskretna przestrzeń latentna
+                \item Wizualizacja codebooka
+                \item Dobre kompresja z zachowaniem jakości
+                \item Możliwość interpolacji
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{Diffusion Model:}
+            \begin{itemize}
+                \item Progresywne generowanie
+                \item Wysoka jakość próbek
+                \item Długi czas generowania
+                \item Stabilny proces treningu
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Krzywe uczenia}
+    \begin{columns}[T]
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{images/autoencoder/autoencoder_curve.png}
+                \caption{Krzywa uczenia Autoencodera}
+                \label{fig:autoencoder_learning_curve}
+            \end{figure}
+        \end{column}
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{images/cond_vae/cond_vae_curve.png}
+                \caption{Krzywa uczenia Conditional VAE}
+                \label{fig:conditional_vae_learning_curve}
+            \end{figure}
+        \end{column}
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{images/conv_vae/conv_vae_curve.png}
+                \caption{Krzywa uczenia Convolutional VAE}
+                \label{fig:convolutional_vae_learning_curve}
+            \end{figure}
+        \end{column}
+    \end{columns}
+    \begin{columns}[T]
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{images/vq_vae/vq_vae_curve.png}
+                \caption{Krzywa uczenia VQ-VAE}
+                \label{fig:vqvae_learning_curve}
+            \end{figure}
+        \end{column}
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{h_cat.png}
+                \caption{Krzywa uczenia Diffusion Model}
+                \label{fig:diffusion_model_learning_curve}
+            \end{figure}
+        \end{column}
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{h_cat.png}
+                \caption{Krzywa uczenia GAN}
+                \label{fig:gan_learning_curve}
+            \end{figure}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \section{Wizualizacje i przykłady}
 
 \begin{frame}{Przykłady generowanych cyfr}
-  \begin{columns}[T]
-    \begin{column}{0.5\textwidth}
-      \centering
-      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
-        \centering
-        \textbf{Przykładowe wygenerowane cyfry}
-        \begin{itemize}
-          \item Basic AE: Rekonstrukcja cyfr
-          \item VAE: Generowanie nowych cyfr
-          \item GAN: Wysokiej jakości próbki
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \centering
-      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
-        \centering
-        \textbf{Interpolacja w przestrzeni latentnej}
-        \begin{itemize}
-          \item VAE: Płynne przejścia
-          \item Conditional VAE: Interpolacja między cyframi
-          \item GAN: Manipulacja cechami
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
+    \begin{columns}[c]
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{h_cat.png}
+                \caption{Autoencoder}
+                \label{fig:przyklady_autoencoder}
+            \end{figure}
+        \end{column}
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{h_cat.png}
+                \caption{Conditional VAE}
+                \label{fig:przyklady_conditional_vae}
+            \end{figure}
+        \end{column}
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{h_cat.png}
+                \caption{Convolutional VAE}
+                \label{fig:przyklady_convolutional_vae}
+            \end{figure}
+        \end{column}
+    \end{columns}
+    \begin{columns}[c]
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=.8\textwidth]{images/vq_vae/samples.png}
+                \caption{VQ-VAE}
+                \label{fig:przyklady_vqvae}
+            \end{figure}
+        \end{column}
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{images/diffusion/samples.png}
+                \caption{Diffusion Model}
+                \label{fig:przyklady_diffusion_model}
+            \end{figure}
+        \end{column}
+        \begin{column}{.33\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=.8\textwidth]{images/gan/samples.png}
+                \caption{GAN}
+                \label{fig:przyklady_gan}
+            \end{figure}
+        \end{column}
+    \end{columns}
 \end{frame}
 
-\section{Wnioski i przyszłe kierunki}
+\begin{frame}{Interpolacja w przestrzeni latentnej}
+    \begin{columns}[T]
+        \begin{column}{.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{h_cat.png}
+                \label{fig:interpolation_vae}
+            \end{figure}
+        \end{column}
+        \begin{column}{.5\textwidth}
+            \textbf{Interpolacja w VAE:}
+            \begin{itemize}
+                \item Płynne przejścia między cyframi: 0->1->2
+                \item Przestrzeń latentna ma sens semantyczny
+            \end{itemize}
+        \end{column}
+    \end{columns}
+
+    \begin{columns}[T]
+        \begin{column}{.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{h_cat.png}
+                \label{fig:interpolation_conditional_vae}
+            \end{figure}
+        \end{column}
+        \begin{column}{.5\textwidth}
+            \textbf{Interpolacja w Conditional VAE:}
+            \begin{itemize}
+                \item Interpolacja wewnątrz klasy: różne style tej samej cyfry
+                \item Interpolacja między klasami: morfing 3→8
+            \end{itemize}
+        \end{column}
+    \end{columns}
+
+\end{frame}
+
+\section{Wnioski i kierunki rozwoju}
 
 \begin{frame}{Główne wnioski}
-  \begin{block}{Najważniejsze obserwacje}
-    \begin{itemize}
-      \item VAE i GAN osiągnęły najlepsze wyniki w generowaniu cyfr
-      \item Conditional VAE pozwala na kontrolowane generowanie
-      \item Diffusion Model wymaga najdłuższego czasu treningu
-      \item VQ-VAE zapewnia dobre kompresję z zachowaniem jakości
-      \item Każdy model ma swoje unikalne zalety i zastosowania
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}{Kierunki rozwoju}
-  \begin{columns}[T]
-    \begin{column}{0.6\textwidth}
-      \textbf{Możliwe ulepszenia:}
-      \begin{itemize}
-        \item Implementacja bardziej zaawansowanych architektur
-        \item Optymalizacja hiperparametrów
-        \item Eksperymenty z większymi zbiorami danych
-        \item Badanie wpływu różnych funkcji straty
-        \item Integracja najlepszych cech różnych modeli
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.4\textwidth}
-      \begin{tcolorbox}[colback=yellow!10!white, colframe=black!60, boxrule=0.5pt, arc=3mm]
-        \centering
-        \textbf{Perspektywy:}
+    \begin{block}{Najważniejsze obserwacje}
         \begin{itemize}
-          \item Zastosowania praktyczne
-          \item Integracja modeli
-          \item Nowe architektury
+            \item VAE i GAN osiągnęły najlepsze wyniki w generowaniu cyfr
+            \item Conditional VAE oferuje najlepszy balans jakości i kontroli
+            \item VQ-VAE zapewnia dobre kompresję z zachowaniem jakości
+            \item Diffusion Model rozczarował - prawdopodobne błędy implementacyjne
         \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
+    \end{block}
+    \begin{block}{Ranking modeli}
+        \begin{enumerate}
+            \item \textbf{Conditional VAE:} solidny wybór dla większości aplikacji.
+            \item \textbf{Diffusion:} Najlepsza jakość, bardzo długi czas nauki i~generowania.
+            \item \textbf{GAN:} Dobra jakość, trudny trening.
+            \item \textbf{Convolutional VAE:} Lepsza jakość dla obrazów, wolniejszy trening.
+            \item \textbf{VQ-VAE:} Dobra kompresja, problemy z jakością generowanych próbek.
+            \item \textbf{Basic AE:} Najszybszy trening, ograniczona jakość.
+        \end{enumerate}
+    \end{block}
 \end{frame}
 
 \begin{frame}
-  \centering
-  \Huge Dziękujemy za uwagę!
+    \centering
+    \Huge Dziękujemy za uwagę!
 \end{frame}
 
-\end{document} 
+\end{document}
+
+% Metryki oceny do wywalenia

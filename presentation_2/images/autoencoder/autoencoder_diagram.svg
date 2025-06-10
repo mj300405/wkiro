@@ -1,0 +1,180 @@
+<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="encoderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#2980b9;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="decoderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#c0392b;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="latentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f39c12;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#e67e22;stop-opacity:0.8" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="600" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2c3e50">
+    BasicAE: Autoencoder Architecture
+  </text>
+  
+  <!-- Input Image -->
+  <g transform="translate(50, 140)">
+    <rect x="0" y="0" width="80" height="80" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Input</text>
+    <text x="40" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">28×28×1</text>
+    <text x="40" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#34495e">784 pixels</text>
+  </g>
+  
+  <!-- Encoder Section -->
+  <text x="300" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2980b9">Encoder</text>
+  
+  <!-- Encoder Layer 1 -->
+  <g transform="translate(200, 120)">
+    <rect x="0" y="0" width="60" height="120" fill="url(#encoderGrad)" stroke="#2980b9" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Linear</text>
+    <text x="30" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">784→256</text>
+    <text x="30" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">BatchNorm</text>
+    <text x="30" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">LeakyReLU</text>
+    <text x="30" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">Dropout</text>
+    <text x="30" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">(0.2)</text>
+  </g>
+  
+  <!-- Encoder Layer 2 -->
+  <g transform="translate(280, 130)">
+    <rect x="0" y="0" width="60" height="100" fill="url(#encoderGrad)" stroke="#2980b9" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Linear</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">256→128</text>
+    <text x="30" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">BatchNorm</text>
+    <text x="30" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">LeakyReLU</text>
+    <text x="30" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">Dropout</text>
+  </g>
+  
+  <!-- Encoder Layer 3 -->
+  <g transform="translate(360, 140)">
+    <rect x="0" y="0" width="60" height="80" fill="url(#encoderGrad)" stroke="#2980b9" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Linear</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">128→64</text>
+    <text x="30" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">BatchNorm</text>
+    <text x="30" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">LeakyReLU</text>
+  </g>
+  
+  <!-- Encoder Layer 4 -->
+  <g transform="translate(440, 150)">
+    <rect x="0" y="0" width="60" height="60" fill="url(#encoderGrad)" stroke="#2980b9" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Linear</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">64→32</text>
+    <text x="30" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">LeakyReLU</text>
+  </g>
+  
+  <!-- Latent Space -->
+  <g transform="translate(540, 160)">
+    <rect x="0" y="0" width="80" height="40" fill="url(#latentGrad)" stroke="#f39c12" stroke-width="3" rx="8" filter="url(#shadow)"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Latent</text>
+    <text x="40" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">32-dim</text>
+  </g>
+  
+  <!-- Decoder Section -->
+  <text x="800" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#c0392b">Decoder</text>
+  
+  <!-- Decoder Layer 1 -->
+  <g transform="translate(660, 150)">
+    <rect x="0" y="0" width="60" height="60" fill="url(#decoderGrad)" stroke="#c0392b" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Linear</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">32→64</text>
+    <text x="30" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">LeakyReLU</text>
+  </g>
+  
+  <!-- Decoder Layer 2 -->
+  <g transform="translate(740, 140)">
+    <rect x="0" y="0" width="60" height="80" fill="url(#decoderGrad)" stroke="#c0392b" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Linear</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">64→128</text>
+    <text x="30" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">BatchNorm</text>
+    <text x="30" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">LeakyReLU</text>
+  </g>
+  
+  <!-- Decoder Layer 3 -->
+  <g transform="translate(820, 130)">
+    <rect x="0" y="0" width="60" height="100" fill="url(#decoderGrad)" stroke="#c0392b" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Linear</text>
+    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">128→256</text>
+    <text x="30" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">BatchNorm</text>
+    <text x="30" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">LeakyReLU</text>
+    <text x="30" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">Dropout</text>
+  </g>
+  
+  <!-- Decoder Layer 4 -->
+  <g transform="translate(900, 120)">
+    <rect x="0" y="0" width="60" height="120" fill="url(#decoderGrad)" stroke="#c0392b" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="30" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Linear</text>
+    <text x="30" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">256→784</text>
+    <text x="30" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">BatchNorm</text>
+    <text x="30" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">LeakyReLU</text>
+    <text x="30" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="white">Dropout</text>
+    <text x="30" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white">Sigmoid</text>
+  </g>
+  
+  <!-- Output Image -->
+  <g transform="translate(1020, 140)">
+    <rect x="0" y="0" width="80" height="80" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2" rx="5" filter="url(#shadow)"/>
+    <text x="40" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Output</text>
+    <text x="40" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">28×28×1</text>
+    <text x="40" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#34495e">Reconstructed</text>
+  </g>
+  
+  <!-- Arrows -->
+  <!-- Input to Encoder -->
+  <path d="M 135 180 L 195 180" stroke="#34495e" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Between Encoder layers -->
+  <path d="M 265 180 L 275 180" stroke="#2980b9" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 345 180 L 355 180" stroke="#2980b9" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 425 180 L 435 180" stroke="#2980b9" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Encoder to Latent -->
+  <path d="M 505 180 L 535 180" stroke="#f39c12" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Latent to Decoder -->
+  <path d="M 625 180 L 655 180" stroke="#f39c12" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Between Decoder layers -->
+  <path d="M 725 180 L 735 180" stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 805 180 L 815 180" stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 885 180 L 895 180" stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Decoder to Output -->
+  <path d="M 965 180 L 1015 180" stroke="#34495e" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34495e"/>
+    </marker>
+  </defs>
+  
+  <!-- Loss Function -->
+  <g transform="translate(450, 300)">
+    <rect x="0" y="0" width="300" height="80" fill="#ffffff" stroke="#95a5a6" stroke-width="2" rx="10" filter="url(#shadow)"/>
+    <text x="150" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Loss Function</text>
+    <text x="150" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#34495e">Binary Cross Entropy (BCE)</text>
+    <text x="150" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#7f8c8d">BCE = -Σ[x·log(x̂) + (1-x)·log(1-x̂)]</text>
+  </g>
+  
+  <!-- Dimensions Legend -->
+  <g transform="translate(50, 450)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Architecture Details:</text>
+    <text x="0" y="25" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Input: MNIST images (28×28 pixels, flattened to 784 dimensions)</text>
+    <text x="0" y="45" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Hidden dimensions: 784 → 256 → 128 → 64 → 32 → 64 → 128 → 256 → 784</text>
+    <text x="0" y="65" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Activation: LeakyReLU (α=0.2), Dropout (p=0.2), BatchNorm1d</text>
+    <text x="0" y="85" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Output activation: Sigmoid (for pixel values ∈ [0,1])</text>
+    <text x="0" y="105" font-family="Arial, sans-serif" font-size="12" fill="#34495e">• Bottleneck: 32-dimensional latent representation</text>
+  </g>
+</svg>

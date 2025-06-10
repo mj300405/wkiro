@@ -1,5 +1,0 @@
-\babel@toc {polish}{}\relax 
-\beamer@sectionintoc {1}{Przegląd zaimplementowanych modeli}{3}{0}{1}
-\beamer@sectionintoc {2}{Wyniki i metryki}{4}{0}{2}
-\beamer@sectionintoc {3}{Wizualizacje i przykłady}{7}{0}{3}
-\beamer@sectionintoc {4}{Wnioski i przyszłe kierunki}{8}{0}{4}
