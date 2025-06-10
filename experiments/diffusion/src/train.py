@@ -8,6 +8,7 @@ import numpy as np
 from tqdm import tqdm
 from model import DiffusionModel
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 device = (
     "mps" if torch.backends.mps.is_available() else
@@ -23,7 +24,7 @@ def main():
         transforms.Normalize((0.5,), (0.5,))
     ])
     dataset = datasets.MNIST(root='../../data', train=True, download=True, transform=transform)
-    loader = torch.utils.data.DataLoader(dataset, batch_size=128, shuffle=True)
+    loader = torch.utils.data.DataLoader(dataset, batch_size=128, shuffle=True, num_workers=4)
     # Model
     model = DiffusionModel(in_channels=1, base_ch=32).to(device)
     # DDPM schedule
@@ -40,6 +41,8 @@ def main():
     run_id = datetime.now().strftime('run_%Y%m%d_%H%M%S')
     run_dir = os.path.join('checkpoints', run_id)
     os.makedirs(run_dir, exist_ok=True)
+    # For tracking losses
+    epoch_losses = []
     # Training
     for epoch in range(1, 51):
         model.train()
@@ -59,13 +62,21 @@ def main():
             optimizer.step()
             losses.append(loss.item())
             pbar.set_postfix(loss=loss.item())
-        print(f"Epoch {epoch} | Loss: {np.mean(losses):.4f}")
+        
+        avg_epoch_loss = np.mean(losses)
+        epoch_losses.append(avg_epoch_loss)
+        print(f"Epoch {epoch} | Loss: {avg_epoch_loss:.4f}")
+        
+        # Save checkpoint every 10 epochs
         if epoch % 10 == 0:
+            checkpoint_path = os.path.join(run_dir, f'checkpoint_epoch_{epoch}.pt')
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-            }, os.path.join(run_dir, f'checkpoint_epoch_{epoch}.pt'))
+                'loss': avg_epoch_loss,
+            }, checkpoint_path)
+            print(f"Checkpoint saved: {checkpoint_path}")
             # Sampling
             model.eval()
             with torch.no_grad():
@@ -82,6 +93,15 @@ def main():
                         noise = 0
                     x = 1 / torch.sqrt(alpha_t) * (x - ((1 - alpha_t) / torch.sqrt(1 - alpha_t_bar)) * pred_noise) + torch.sqrt(beta_t) * noise
                 save_image(x, os.path.join(run_dir, f'sample_epoch_{epoch}.png'), normalize=True)
+    # Plot training losses
+    plt.figure(figsize=(10, 5))
+    plt.plot(epoch_losses, label='Training Loss')
+    plt.title('Diffusion Model Training Loss Over Time')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.savefig(os.path.join(run_dir, 'training_loss.png'))
+    plt.close()
     print(f"Training complete. Check '{run_dir}' for generated samples and checkpoints.")
 
 if __name__ == '__main__':

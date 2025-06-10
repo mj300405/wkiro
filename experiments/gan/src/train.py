@@ -130,6 +130,10 @@ def train_gan(
     best_g_loss = float('inf')
     patience_counter = 0
     
+    # For tracking losses
+    g_losses = []
+    d_losses = []
+    
     print("Starting training...")
     
     for epoch in range(1, epochs + 1):
@@ -187,13 +191,17 @@ def train_gan(
         avg_g_loss = epoch_g_loss / num_batches
         avg_d_loss = epoch_d_loss / num_batches
         
+        # Track losses
+        g_losses.append(avg_g_loss)
+        d_losses.append(avg_d_loss)
+        
         print(f'Epoch [{epoch}/{epochs}]')
         print(f'Generator Loss: {avg_g_loss:.4f}')
         print(f'Discriminator Loss: {avg_d_loss:.4f}')
         
         # Save samples
-        #if epoch % sample_interval == 0:
-        #    save_samples(generator, epoch, device, latent_dim, save_dir=run_dir)
+        if epoch % sample_interval == 0:
+            save_samples(generator, epoch, device, latent_dim, save_dir=run_dir)
         
         # Save checkpoint every save_interval epochs
         if epoch % save_interval == 0:
@@ -221,6 +229,17 @@ def train_gan(
     save_checkpoint(generator, discriminator, g_optimizer, d_optimizer, 
                    epochs, avg_g_loss, avg_d_loss, final_checkpoint_path)
     print(f"Final model saved: {final_checkpoint_path}")
+    
+    # Plot training losses
+    plt.figure(figsize=(10, 5))
+    plt.plot(g_losses, label='Generator Loss')
+    plt.plot(d_losses, label='Discriminator Loss')
+    plt.title('GAN Training Losses Over Time')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.savefig(os.path.join(run_dir, 'training_loss.png'))
+    plt.close()
     
     print("Training finished!")
 
