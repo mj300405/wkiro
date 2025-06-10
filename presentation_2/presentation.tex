@@ -56,8 +56,8 @@
 % Add tcolorbox package
 \usepackage{tcolorbox}
 
-\title{Podsumowanie wyników modeli generatywnych}
-\subtitle{Analiza porównawcza różnych architektur}
+\title{Generowanie cyfr pisanych odręcznie na bazie sieci neuronowej o architekturze autoencodera}
+\subtitle{Analiza porównawcza różnych architektur oraz wyników}
 \author{Jakub Barylak, Michał Jagoda, Piotr Marcol}
 \institute{Politechnika Śląska}
 \date{11 czerwca 2025}
@@ -80,7 +80,6 @@
     \begin{itemize}
         \item Analiza architektur Autoencoderów, VAE, GAN i Diffusion Model.
         \item Porównanie jakości generowanych próbek.
-        \item Omówienie metryk oceny modeli.
     \end{itemize}
 \end{frame}
 \section{Przegląd zaimplementowanych modeli i ich architektur}
@@ -183,71 +182,6 @@
         \end{itemize}
     \end{block}
     \small{* Czas treningu mierzony na urządzeniu z Apple M4 Pro (20 rdzeni GPU)}
-\end{frame}
-
-\begin{frame}{Porównanie modeli}
-    \begin{columns}[T]
-        \begin{column}{0.6\textwidth}
-            \begin{itemize}
-                \item \textbf{Autoencoder:}
-                      \begin{itemize}
-                          \item Najszybszy trening
-                          \item Najprostsza implementacja
-                          \item Ograniczona jakość generowanych próbek
-                          \item BCE loss jako metryka rekonstrukcji
-                      \end{itemize}
-                \item \textbf{VAE:}
-                      \begin{itemize}
-                          \item Lepsza jakość generowanych próbek
-                          \item Możliwość interpolacji w przestrzeni latentnej
-                          \item Stabilny trening
-                          \item Balans między rekonstrukcją a KL divergence
-                      \end{itemize}
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.4\textwidth}
-            \begin{itemize}
-                \item \textbf{GAN:}
-                      \begin{itemize}
-                          \item Najlepsza jakość wizualna
-                          \item Trudny trening
-                          \item Problem z mode collapse
-                          \item Wymaga balansu między generatorem a dyskryminatorem
-                      \end{itemize}
-            \end{itemize}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}{Zaawansowane modele}
-    \begin{columns}[T]
-        \begin{column}{0.5\textwidth}
-            \textbf{Conditional VAE:}
-            \begin{itemize}
-                \item Kontrolowane generowanie cyfr
-                \item Interpolacja między cyframi
-                \item Lepsza jakość niż standardowy VAE
-                \item Wymaga etykiet podczas treningu
-            \end{itemize}
-
-            \textbf{VQ-VAE:}
-            \begin{itemize}
-                \item Dyskretna przestrzeń latentna
-                \item Wizualizacja codebooka
-                \item Dobre kompresja z zachowaniem jakości
-                \item Możliwość interpolacji
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.5\textwidth}
-            \textbf{Diffusion Model:}
-            \begin{itemize}
-                \item Progresywne generowanie
-                \item Wysoka jakość próbek
-                \item Długi czas generowania
-                \item Stabilny proces treningu
-            \end{itemize}
-        \end{column}
-    \end{columns}
 \end{frame}
 
 \begin{frame}{Krzywe uczenia}
@@ -427,7 +361,72 @@
 
 \section{Wnioski i kierunki rozwoju}
 
-\begin{frame}{Główne wnioski}
+\begin{frame}{Wnioski - podstawowe modele}
+    \begin{columns}[T]
+        \begin{column}{0.6\textwidth}
+            \begin{itemize}
+                \item \textbf{Autoencoder:}
+                      \begin{itemize}
+                          \item Najszybszy trening
+                          \item Najprostsza implementacja
+                          \item Ograniczona jakość generowanych próbek
+                          \item BCE loss jako metryka rekonstrukcji
+                      \end{itemize}
+                \item \textbf{VAE:}
+                      \begin{itemize}
+                          \item Lepsza jakość generowanych próbek
+                          \item Możliwość interpolacji w przestrzeni latentnej
+                          \item Stabilny trening
+                          \item Balans między rekonstrukcją a KL divergence
+                      \end{itemize}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \begin{itemize}
+                \item \textbf{GAN:}
+                      \begin{itemize}
+                          \item Najlepsza jakość wizualna
+                          \item Trudny trening
+                          \item Problem z mode collapse
+                          \item Wymaga balansu między generatorem a dyskryminatorem
+                      \end{itemize}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Wnioski - zaawansowane modele}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \textbf{Conditional VAE:}
+            \begin{itemize}
+                \item Kontrolowane generowanie cyfr
+                \item Interpolacja między cyframi
+                \item Lepsza jakość niż standardowy VAE
+                \item Wymaga etykiet podczas treningu
+            \end{itemize}
+
+            \textbf{VQ-VAE:}
+            \begin{itemize}
+                \item Dyskretna przestrzeń latentna
+                \item Wizualizacja codebooka
+                \item Dobre kompresja z zachowaniem jakości
+                \item Możliwość interpolacji
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{Diffusion Model:}
+            \begin{itemize}
+                \item Progresywne generowanie
+                \item Wysoka jakość próbek
+                \item Długi czas generowania
+                \item Stabilny proces treningu
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Podsumowanie}
     \begin{block}{Najważniejsze obserwacje}
         \begin{itemize}
             \item VAE i GAN osiągnęły najlepsze wyniki w generowaniu cyfr
