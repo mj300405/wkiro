@@ -114,4 +114,17 @@ class VQVAE(nn.Module):
         recon_loss = F.binary_cross_entropy(recon_x, x, reduction='sum')
         total_loss = recon_loss + vq_loss
         
-        return total_loss, recon_loss, vq_loss 
+        return total_loss, recon_loss, vq_loss
+    
+    def decode_from_indices(self, indices):
+        # indices: (B, H, W)
+        device = indices.device
+        # Look up embeddings
+        flat_indices = indices.view(indices.size(0), -1)  # (B, H*W)
+        embeddings = self.vq.embedding(flat_indices)  # (B, H*W, embedding_dim)
+        # Reshape to (B, embedding_dim, H, W)
+        B, H, W = indices.shape
+        embedding_dim = embeddings.size(-1)
+        quantized = embeddings.view(B, H, W, embedding_dim).permute(0, 3, 1, 2).contiguous()
+        # Decode
+        return self.decoder(quantized) 

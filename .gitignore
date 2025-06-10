@@ -195,3 +195,6 @@ ENV/
 data/
 experiments/*/checkpoints/run_*/
 experiments/*/generated_samples/
+
+# PyTorch model checkpoints
+*.pth
