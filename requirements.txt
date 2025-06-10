@@ -9,4 +9,5 @@
 # Common dependencies
 numpy>=1.24.0
 matplotlib>=3.7.0
-tqdm>=4.65.0 
+tqdm>=4.65.0
+imageio 

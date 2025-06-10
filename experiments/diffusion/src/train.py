@@ -1,111 +1,88 @@
-import os
 import torch
 import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader
-from torchvision import transforms, datasets
-from tqdm import tqdm
-import numpy as np
-from model import DiffusionModel
 import torch.nn.functional as F
+from torchvision import transforms, datasets
+from torchvision.utils import save_image
+import os
+import numpy as np
+from tqdm import tqdm
+from model import DiffusionModel
+from datetime import datetime
 
-# Set device
 device = (
-    "mps" 
-    if torch.backends.mps.is_available()
-    else "cuda" 
-    if torch.cuda.is_available() 
-    else "cpu"
+    "mps" if torch.backends.mps.is_available() else
+    "cuda" if torch.cuda.is_available() else "cpu"
 )
 print(f"Using device: {device}")
 
-class DiffusionTrainer:
-    def __init__(self, 
-                 model,
-                 timesteps=1000,
-                 beta_start=1e-4,
-                 beta_end=0.02,
-                 device=device):
-        self.model = model.to(device)
-        self.device = device
-        self.timesteps = timesteps
-        
-        # Linear noise schedule
-        self.betas = torch.linspace(beta_start, beta_end, timesteps).to(device)
-        self.alphas = 1 - self.betas
-        self.alphas_cumprod = torch.cumprod(self.alphas, dim=0)
-        self.alphas_cumprod_prev = F.pad(self.alphas_cumprod[:-1], (1, 0), value=1.0)
-        
-        # Calculations for diffusion q(x_t | x_{t-1})
-        self.sqrt_alphas_cumprod = torch.sqrt(self.alphas_cumprod)
-        self.sqrt_one_minus_alphas_cumprod = torch.sqrt(1. - self.alphas_cumprod)
-        
-        # Calculations for posterior q(x_{t-1} | x_t, x_0)
-        self.posterior_variance = self.betas * (1. - self.alphas_cumprod_prev) / (1. - self.alphas_cumprod)
-
-    def get_noisy_image(self, x_start, t):
-        noise = torch.randn_like(x_start)
-        sqrt_alphas_cumprod_t = self.sqrt_alphas_cumprod[t].reshape(-1, 1, 1, 1)
-        sqrt_one_minus_alphas_cumprod_t = self.sqrt_one_minus_alphas_cumprod[t].reshape(-1, 1, 1, 1)
-        return sqrt_alphas_cumprod_t * x_start + sqrt_one_minus_alphas_cumprod_t * noise, noise
-
-    def train_step(self, x, optimizer):
-        optimizer.zero_grad()
-        
-        t = torch.randint(0, self.timesteps, (x.shape[0],), device=self.device)
-        x_noisy, noise = self.get_noisy_image(x, t)
-        predicted_noise = self.model(x_noisy, t)
-        
-        loss = F.mse_loss(noise, predicted_noise)
-        loss.backward()
-        optimizer.step()
-        
-        return loss.item()
-
-def train(model, 
-          train_loader,
-          num_epochs=100,
-          lr=2e-4,
-          save_dir='checkpoints',
-          device=device):
-    
-    trainer = DiffusionTrainer(model, device=device)
-    optimizer = optim.AdamW(model.parameters(), lr=lr)
-    
-    os.makedirs(save_dir, exist_ok=True)
-    
-    for epoch in range(num_epochs):
+def main():
+    # Data
+    transform = transforms.Compose([
+        transforms.Resize((32, 32)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5,), (0.5,))
+    ])
+    dataset = datasets.MNIST(root='../../data', train=True, download=True, transform=transform)
+    loader = torch.utils.data.DataLoader(dataset, batch_size=128, shuffle=True)
+    # Model
+    model = DiffusionModel(in_channels=1, base_ch=32).to(device)
+    # DDPM schedule
+    timesteps = 1000
+    beta_start = 1e-4
+    beta_end = 0.02
+    betas = torch.linspace(beta_start, beta_end, timesteps).to(device)
+    alphas = 1. - betas
+    alphas_cumprod = torch.cumprod(alphas, dim=0)
+    sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
+    sqrt_one_minus_alphas_cumprod = torch.sqrt(1. - alphas_cumprod)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4)
+    # Output dir
+    run_id = datetime.now().strftime('run_%Y%m%d_%H%M%S')
+    run_dir = os.path.join('checkpoints', run_id)
+    os.makedirs(run_dir, exist_ok=True)
+    # Training
+    for epoch in range(1, 51):
         model.train()
-        pbar = tqdm(train_loader)
-        for i, (images, _) in enumerate(pbar):
-            images = images.to(device)
-            loss = trainer.train_step(images, optimizer)
-            pbar.set_description(f"Epoch {epoch} | Loss: {loss:.4f}")
-        
-        if (epoch + 1) % 10 == 0:
+        pbar = tqdm(loader, desc=f"Epoch {epoch}")
+        losses = []
+        for x, _ in pbar:
+            x = x.to(device)
+            t = torch.randint(0, timesteps, (x.size(0),), device=device)
+            noise = torch.randn_like(x)
+            sqrt_alphas_cumprod_t = sqrt_alphas_cumprod[t].reshape(-1, 1, 1, 1)
+            sqrt_one_minus_alphas_cumprod_t = sqrt_one_minus_alphas_cumprod[t].reshape(-1, 1, 1, 1)
+            x_noisy = sqrt_alphas_cumprod_t * x + sqrt_one_minus_alphas_cumprod_t * noise
+            pred_noise = model(x_noisy, t)
+            loss = F.mse_loss(pred_noise, noise)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            losses.append(loss.item())
+            pbar.set_postfix(loss=loss.item())
+        print(f"Epoch {epoch} | Loss: {np.mean(losses):.4f}")
+        if epoch % 10 == 0:
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-            }, os.path.join(save_dir, f'checkpoint_epoch_{epoch+1}.pt'))
-
-def main():
-    # Data transforms for MNIST
-    transform = transforms.Compose([
-        transforms.Resize((32, 32)),  # Resize to match model's expected input size
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,))  # Single channel normalization for MNIST
-    ])
-    
-    # Load MNIST dataset from root data directory
-    dataset = datasets.MNIST(root='../../data', train=True, download=True, transform=transform)
-    train_loader = DataLoader(dataset, batch_size=128, shuffle=True, num_workers=4)
-    
-    # Initialize model with single channel input
-    model = DiffusionModel(in_channels=1)
-    
-    # Train model
-    train(model, train_loader)
+            }, os.path.join(run_dir, f'checkpoint_epoch_{epoch}.pt'))
+            # Sampling
+            model.eval()
+            with torch.no_grad():
+                x = torch.randn(16, 1, 32, 32).to(device)
+                for t_ in reversed(range(timesteps)):
+                    t_batch = torch.full((16,), t_, device=device, dtype=torch.long)
+                    pred_noise = model(x, t_batch)
+                    alpha_t = alphas[t_]
+                    alpha_t_bar = alphas_cumprod[t_]
+                    beta_t = betas[t_]
+                    if t_ > 0:
+                        noise = torch.randn_like(x)
+                    else:
+                        noise = 0
+                    x = 1 / torch.sqrt(alpha_t) * (x - ((1 - alpha_t) / torch.sqrt(1 - alpha_t_bar)) * pred_noise) + torch.sqrt(beta_t) * noise
+                save_image(x, os.path.join(run_dir, f'sample_epoch_{epoch}.png'), normalize=True)
+    print(f"Training complete. Check '{run_dir}' for generated samples and checkpoints.")
 
 if __name__ == '__main__':
     main() 
