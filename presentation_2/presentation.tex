@@ -161,18 +161,18 @@
 \begin{frame}{Wyniki eksperymentów}
     \begin{figure}
         \centering
-        \begin{tabularx}{\textwidth}{l|Y|Y|c|Y}
+        \begin{tabularx}{\textwidth}{l|Y|Y|Y}
             \hline
-            \textbf{Model}    & \textbf{Training Time} & \textbf{Convergence} \\
+            \textbf{Model}    & \textbf{Training Time} & \textbf{Convergence} & \textbf{Total time} \\
             \hline
-            Autoencoder       & $\sim$4~sec            & Epoch 169            \\
-            Conditional VAE   & $\sim$13.5~sec         & Epoch 104            \\
-            Convolutional VAE & $\sim$5.5~sec          & Epoch 291            \\
-            GAN               & $\sim$23~sec           & Epoch 30             \\
-            VQ-VAE            & $\sim$5~sec            & Epoch 34             \\
-            Diffusion Model   & $\sim$18~sec           & Epoch 50             \\
+            Autoencoder       & $\sim$4~sec            & Epoch 169            &                     \\
+            Conditional VAE   & $\sim$13.5~sec         & Epoch 104            &                     \\
+            Convolutional VAE & $\sim$5.5~sec          & Epoch 291            &                     \\
+            GAN               & $\sim$23~sec           & Epoch 30             &                     \\
+            VQ-VAE            & $\sim$5~sec            & Epoch 34             &                     \\
+            Diffusion Model   & $\sim$18~sec           & Epoch 50             &                     \\
             \hline
-                              & per~epoch$^*$          &                      \\
+                              & per~epoch$^*$          &                      &                     \\
         \end{tabularx}
     \end{figure}
     \begin{block}{Early stopping}
@@ -182,7 +182,7 @@
             \item Trening przerywany, gdy nie obserwowano poprawy przez 10 epok.
         \end{itemize}
     \end{block}
-    \small{* Czas treningu mierzony na urządzeniu z Apple M4 Pro (20 rdzeni)}
+    \small{* Czas treningu mierzony na urządzeniu z Apple M4 Pro (20 rdzeni GPU)}
 \end{frame}
 
 \begin{frame}{Porównanie modeli}
@@ -289,7 +289,7 @@
         \begin{column}{.33\textwidth}
             \begin{figure}
                 \centering
-                \includegraphics[width=\textwidth]{h_cat.png}
+                \includegraphics[width=\textwidth]{images/diffusion/training_loss.png}
                 \caption{Krzywa uczenia Diffusion Model}
                 \label{fig:diffusion_model_learning_curve}
             \end{figure}
@@ -297,7 +297,7 @@
         \begin{column}{.33\textwidth}
             \begin{figure}
                 \centering
-                \includegraphics[width=\textwidth]{h_cat.png}
+                \includegraphics[width=\textwidth]{images/gan/training_loss.png}
                 \caption{Krzywa uczenia GAN}
                 \label{fig:gan_learning_curve}
             \end{figure}
@@ -308,6 +308,32 @@
 \section{Wizualizacje i przykłady}
 
 \begin{frame}{Przykłady generowanych cyfr}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/autoencoder/samples.png}
+        \caption{Autoencoder}
+        \label{fig:przyklady_autoencoder_2}
+    \end{figure}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/conv_vae/samples.png}
+        \caption{Convolutional VAE}
+        \label{fig:przyklady_convolutional_vae_2}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Przykłady generowanych cyfr - cz. 2}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/cond_vae/samples.png}
+        \caption{Conditional VAE}
+        \label{fig:przyklady_conditional_vae_2}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}{Przykłady generowanych cyfr - cz. 3}
     \begin{columns}[c]
         \begin{column}{.33\textwidth}
             \begin{figure}
