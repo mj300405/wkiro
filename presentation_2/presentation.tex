@@ -149,7 +149,7 @@
 \begin{frame}{Architektura Diffusion Model}
     \begin{figure}
         \centering
-        \includegraphics[width=0.8\textwidth]{images/diffusion/diffusion_diagram.png}
+        \includegraphics[width=0.8\textwidth]{images/diffusion/diffusion_unet.png}
         \caption{Schemat architektury Diffusion Model}
         \label{fig:diffusion_architecture}
     \end{figure}
@@ -164,12 +164,12 @@
             \hline
             \textbf{Model}    & \textbf{Training Time} & \textbf{Convergence} & \textbf{Total time} \\
             \hline
-            Autoencoder       & $\sim$4~sec            & Epoch 169            &                     \\
-            Conditional VAE   & $\sim$13.5~sec         & Epoch 104            &                     \\
-            Convolutional VAE & $\sim$5.5~sec          & Epoch 291            &                     \\
-            GAN               & $\sim$23~sec           & Epoch 30             &                     \\
-            VQ-VAE            & $\sim$5~sec            & Epoch 34             &                     \\
-            Diffusion Model   & $\sim$18~sec           & Epoch 50             &                     \\
+            Autoencoder       & $\sim$4~sec            & Epoch 169            & 11m 16s             \\
+            Conditional VAE   & $\sim$13.5~sec         & Epoch 104            & 23m 24s             \\
+            Convolutional VAE & $\sim$5.5~sec          & Epoch 291            & 26m 40s             \\
+            GAN               & $\sim$23~sec           & Epoch 30             & 11m 30s             \\
+            VQ-VAE            & $\sim$5~sec            & Epoch 34             & 2m 50s              \\
+            Diffusion Model   & $\sim$18~sec           & Epoch 49             & 14m 42s             \\
             \hline
                               & per~epoch$^*$          &                      &                     \\
         \end{tabularx}
@@ -244,13 +244,13 @@
 \begin{frame}{Przykłady generowanych cyfr}
     \begin{figure}
         \centering
-        \includegraphics[width=0.8\textwidth]{images/autoencoder/samples.png}
+        \includegraphics[width=\textwidth]{images/autoencoder/samples.png}
         \caption{Autoencoder}
         \label{fig:przyklady_autoencoder_2}
     \end{figure}
     \begin{figure}
         \centering
-        \includegraphics[width=0.8\textwidth]{images/conv_vae/samples.png}
+        \includegraphics[width=\textwidth]{images/conv_vae/samples.png}
         \caption{Convolutional VAE}
         \label{fig:przyklady_convolutional_vae_2}
     \end{figure}
@@ -260,7 +260,7 @@
 
     \begin{figure}
         \centering
-        \includegraphics[width=0.8\textwidth]{images/cond_vae/samples.png}
+        \includegraphics[width=0.8\textwidth]{images/cond_vae/n_samples.png}
         \caption{Conditional VAE}
         \label{fig:przyklady_conditional_vae_2}
     \end{figure}
@@ -269,97 +269,47 @@
 
 \begin{frame}{Przykłady generowanych cyfr - cz. 3}
     \begin{columns}[c]
-        \begin{column}{.33\textwidth}
+        \begin{column}{.5\textwidth}
             \begin{figure}
                 \centering
-                \includegraphics[width=\textwidth]{h_cat.png}
-                \caption{Autoencoder}
-                \label{fig:przyklady_autoencoder}
-            \end{figure}
-        \end{column}
-        \begin{column}{.33\textwidth}
-            \begin{figure}
-                \centering
-                \includegraphics[width=\textwidth]{h_cat.png}
-                \caption{Conditional VAE}
-                \label{fig:przyklady_conditional_vae}
-            \end{figure}
-        \end{column}
-        \begin{column}{.33\textwidth}
-            \begin{figure}
-                \centering
-                \includegraphics[width=\textwidth]{h_cat.png}
-                \caption{Convolutional VAE}
-                \label{fig:przyklady_convolutional_vae}
-            \end{figure}
-        \end{column}
-    \end{columns}
-    \begin{columns}[c]
-        \begin{column}{.33\textwidth}
-            \begin{figure}
-                \centering
-                \includegraphics[width=.8\textwidth]{images/vq_vae/samples.png}
+                \includegraphics[width=.7\textwidth]{images/vq_vae/samples.png}
                 \caption{VQ-VAE}
                 \label{fig:przyklady_vqvae}
             \end{figure}
         \end{column}
-        \begin{column}{.33\textwidth}
+        \begin{column}{.5\textwidth}
             \begin{figure}
                 \centering
-                \includegraphics[width=\textwidth]{images/diffusion/samples.png}
-                \caption{Diffusion Model}
-                \label{fig:przyklady_diffusion_model}
-            \end{figure}
-        \end{column}
-        \begin{column}{.33\textwidth}
-            \begin{figure}
-                \centering
-                \includegraphics[width=.8\textwidth]{images/gan/samples.png}
+                \includegraphics[width=.7\textwidth]{images/gan/samples.png}
                 \caption{GAN}
                 \label{fig:przyklady_gan}
             \end{figure}
         \end{column}
     \end{columns}
+    \begin{figure}
+        \centering
+        \includegraphics[width=.8\textwidth]{images/diffusion/samples.png}
+        \caption{Diffusion Model}
+        \label{fig:przyklady_diffusion_model}
+    \end{figure}
 \end{frame}
 
 \begin{frame}{Interpolacja w przestrzeni latentnej}
-    \begin{columns}[T]
-        \begin{column}{.5\textwidth}
-            \begin{figure}
-                \centering
-                \includegraphics[width=\textwidth]{h_cat.png}
-                \label{fig:interpolation_vae}
-            \end{figure}
-        \end{column}
-        \begin{column}{.5\textwidth}
-            \textbf{Interpolacja w VAE:}
-            \begin{itemize}
-                \item Płynne przejścia między cyframi: 0->1->2
-                \item Przestrzeń latentna ma sens semantyczny
-            \end{itemize}
-        \end{column}
-    \end{columns}
-
-    \begin{columns}[T]
-        \begin{column}{.5\textwidth}
-            \begin{figure}
-                \centering
-                \includegraphics[width=\textwidth]{h_cat.png}
-                \label{fig:interpolation_conditional_vae}
-            \end{figure}
-        \end{column}
-        \begin{column}{.5\textwidth}
-            \textbf{Interpolacja w Conditional VAE:}
-            \begin{itemize}
-                \item Interpolacja wewnątrz klasy: różne style tej samej cyfry
-                \item Interpolacja między klasami: morfing 3→8
-            \end{itemize}
-        \end{column}
-    \end{columns}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{images/vq_vae/interpolation.png}
+        \caption{Przedstawienie interpolacji w przestrzeni latentnej}
+        \label{fig:interpolation_vae}
+    \end{figure}
+    \textbf{Interpolacja w VAE:}
+    \begin{itemize}
+        \item Płynne przejścia między cyframi: 0$\rightarrow$1$\rightarrow$2
+        \item Przestrzeń latentna ma sens semantyczny
+    \end{itemize}
 
 \end{frame}
 
-\section{Wnioski i kierunki rozwoju}
+\section{Wnioski}
 
 \begin{frame}{Wnioski - podstawowe modele}
     \begin{columns}[T]
@@ -419,6 +369,7 @@
             \begin{itemize}
                 \item Progresywne generowanie
                 \item Wysoka jakość próbek
+                \item Czyste, wyraźne cyfry
                 \item Długi czas generowania
                 \item Stabilny proces treningu
             \end{itemize}
@@ -429,22 +380,35 @@
 \begin{frame}{Podsumowanie}
     \begin{block}{Najważniejsze obserwacje}
         \begin{itemize}
-            \item VAE i GAN osiągnęły najlepsze wyniki w generowaniu cyfr
-            \item Conditional VAE oferuje najlepszy balans jakości i kontroli
-            \item VQ-VAE zapewnia dobre kompresję z zachowaniem jakości
-            \item Diffusion Model rozczarował - prawdopodobne błędy implementacyjne
+            \item Conditional VAE i Diffusion Model osiągnęły najlepsze wyniki jakościowe.
+            \item Conditional VAE oferuje najlepszy balans jakości, szybkości i kontroli.
+            \item Diffusion Model daje świetną jakość kosztem czasu generowania.
+            \item GAN pozostaje dobrym wyborem mimo trudności w treningu.
+            \item VQ-VAE zaskoczył szybkością konwergencji.
         \end{itemize}
     \end{block}
+
+\end{frame}
+
+\begin{frame}{Podsumowanie - cz. 2}
     \begin{block}{Ranking modeli}
         \begin{enumerate}
-            \item \textbf{Conditional VAE:} solidny wybór dla większości aplikacji.
-            \item \textbf{Diffusion:} Najlepsza jakość, bardzo długi czas nauki i~generowania.
-            \item \textbf{GAN:} Dobra jakość, trudny trening.
-            \item \textbf{Convolutional VAE:} Lepsza jakość dla obrazów, wolniejszy trening.
-            \item \textbf{VQ-VAE:} Dobra kompresja, problemy z jakością generowanych próbek.
-            \item \textbf{Basic AE:} Najszybszy trening, ograniczona jakość.
+            \item \textbf{Conditional VAE:} Najlepsza kontrola, doskonała jakość, łatwy w użyciu.
+            \item \textbf{Diffusion:} Bardzo wysoka jakość, ale wolniejszy proces.
+            \item \textbf{GAN:} Dobra jakość wizualna, trudniejszy trening.
+            \item \textbf{Convolutional VAE:} Solidna jakość, dobry dla obrazów.
+            \item \textbf{VQ-VAE:} Najszybszy trening, unikalna estetyka.
+            \item \textbf{Basic AE:} Solidna jakość, dobry dla obrazów.
         \end{enumerate}
     \end{block}
+
+    \begin{block}{Rekomendacje}
+        \begin{itemize}
+            \item Dla większości zastosowań: Conditional VAE.
+            \item Gdy jakość jest priorytetem: Diffusion Model.
+        \end{itemize}
+    \end{block}
+
 \end{frame}
 
 \begin{frame}
@@ -454,4 +418,6 @@
 
 \end{document}
 
-% Metryki oceny do wywalenia
+% Podmień diffusion architecture
+% Uzupełnij tabelkę wyników o czas treningu i konwergencję
+% Usuń koty

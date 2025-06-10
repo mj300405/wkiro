@@ -13,11 +13,7 @@
 \beamer@slide {fig:przyklady_autoencoder_2}{13}
 \beamer@slide {fig:przyklady_convolutional_vae_2}{13}
 \beamer@slide {fig:przyklady_conditional_vae_2}{14}
-\beamer@slide {fig:przyklady_autoencoder}{15}
-\beamer@slide {fig:przyklady_conditional_vae}{15}
-\beamer@slide {fig:przyklady_convolutional_vae}{15}
 \beamer@slide {fig:przyklady_vqvae}{15}
-\beamer@slide {fig:przyklady_diffusion_model}{15}
 \beamer@slide {fig:przyklady_gan}{15}
+\beamer@slide {fig:przyklady_diffusion_model}{15}
 \beamer@slide {fig:interpolation_vae}{16}
-\beamer@slide {fig:interpolation_conditional_vae}{16}
