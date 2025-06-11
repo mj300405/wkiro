@@ -1,0 +1,6 @@
+\babel@toc {polish}{}\relax 
+\beamer@sectionintoc {1}{Wprowadzenie}{3}{0}{1}
+\beamer@sectionintoc {2}{Przegląd zaimplementowanych modeli i ich architektur}{4}{0}{2}
+\beamer@sectionintoc {3}{Wyniki eksperymentów}{12}{0}{3}
+\beamer@sectionintoc {4}{Wizualizacje i przykłady}{14}{0}{4}
+\beamer@sectionintoc {5}{Wnioski}{18}{0}{5}
