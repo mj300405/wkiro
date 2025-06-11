@@ -88,7 +88,7 @@
     \begin{block}{Podstawowe modele}
         \begin{itemize}
             \item \textbf{Autoencoder:} Klasyczny model do rekonstrukcji danych.
-            \item \textbf{Conditional VAE:} Wariacyjny autoencoder z warstwą warunkującą, umożliwiający generowanie danych na podstawie etykiet.
+            \item \textbf{Conditional Convolutional VAE:} Wariacyjny autoencoder z warstwą warunkującą, umożliwiający generowanie danych na podstawie etykiet.
             \item \textbf{Convolutional VAE:} Wariacyjny autoencoder z warstwami konwolucyjnymi, lepiej przystosowany do obrazów.
         \end{itemize}
     \end{block}
@@ -110,15 +110,6 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}{Architektura Conditional VAE}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.8\textwidth]{images/cond_vae/cvae_diagram.png}
-        \caption{Schemat architektury Conditional VAE}
-        \label{fig:conditional_vae_architecture}
-    \end{figure}
-\end{frame}
-
 \begin{frame}{Architektura Convolutional VAE}
     \begin{figure}
         \centering
@@ -128,12 +119,12 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}{Architektura GAN}
+\begin{frame}{Architektura Conditional Convolutional VAE}
     \begin{figure}
         \centering
-        \includegraphics[width=0.8\textwidth]{images/gan/gan_diagram.png}
-        \caption{Schemat architektury GAN}
-        \label{fig:gan_architecture}
+        \includegraphics[width=0.8\textwidth]{images/cond_vae/cvae_diagram.png}
+        \caption{Schemat architektury Conditional Convolutional VAE}
+        \label{fig:conditional_vae_architecture}
     \end{figure}
 \end{frame}
 
@@ -143,6 +134,15 @@
         \includegraphics[width=0.8\textwidth]{images/vq_vae/vqvae_diagram.png}
         \caption{Schemat architektury VQ-VAE}
         \label{fig:vqvae_architecture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Architektura GAN}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/gan/gan_diagram.png}
+        \caption{Schemat architektury GAN}
+        \label{fig:gan_architecture}
     \end{figure}
 \end{frame}
 
@@ -166,7 +166,7 @@
             GAN Discriminator & 6,851,777 & 26.14 \\
             VQ-VAE & 202,273 & 0.77 \\
             Basic AE & 490,992 & 1.87 \\
-            Conditional VAE & 40,626,529 & 154.98 \\
+            Conditional Convolutional VAE & 40,626,529 & 154.98 \\
             Convolutional VAE & 880,545 & 3.36 \\
             Diffusion Model & 840,961 & 3.21 \\
             \hline
@@ -175,7 +175,7 @@
     \end{figure}
     \begin{block}{Obserwacje}
         \begin{itemize}
-            \item Conditional VAE ma największą liczbę parametrów (40.6M)
+            \item Conditional Convolutional VAE ma największą liczbę parametrów (40.6M)
             \item VQ-VAE jest najbardziej kompaktowy (202K parametrów)
             \item GAN Discriminator jest znacznie większy niż Generator
             \item Diffusion Model i Convolutional VAE mają podobną złożoność
@@ -193,7 +193,7 @@
             \textbf{Model}    & \textbf{Czas treningu} & \textbf{Epoka zbieżności} & \textbf{Całkowity czas} \\
             \hline
             Autoencoder       & $\sim$4~sek            & Epoka 169            & 11m 16s             \\
-            Conditional VAE   & $\sim$13.5~sek         & Epoka 104            & 23m 24s             \\
+            Conditional Convolutional VAE   & $\sim$13.5~sek         & Epoka 104            & 23m 24s             \\
             Convolutional VAE & $\sim$5.5~sek          & Epoka 291            & 26m 40s             \\
             GAN               & $\sim$23~sek           & Epoka 30             & 11m 30s             \\
             VQ-VAE            & $\sim$5~sek            & Epoka 34             & 2m 50s              \\
@@ -226,7 +226,7 @@
             \begin{figure}
                 \centering
                 \includegraphics[width=\textwidth]{images/cond_vae/cond_vae_curve.png}
-                \caption{Krzywa uczenia Conditional VAE}
+                \caption{Krzywa uczenia Conditional Convolutional VAE}
                 \label{fig:conditional_vae_learning_curve}
             \end{figure}
         \end{column}
@@ -289,7 +289,7 @@
     \begin{figure}
         \centering
         \includegraphics[width=0.8\textwidth]{images/cond_vae/n_samples.png}
-        \caption{Conditional VAE}
+        \caption{Conditional Convolutional VAE}
         \label{fig:przyklady_conditional_vae_2}
     \end{figure}
 \end{frame}
@@ -363,7 +363,6 @@
             \begin{itemize}
                 \item \textbf{GAN:}
                       \begin{itemize}
-                          \item Najlepsza jakość wizualna
                           \item Trudny trening
                           \item Problem z mode collapse
                           \item Wymaga balansu między generatorem a dyskryminatorem
@@ -376,7 +375,7 @@
 \begin{frame}{Wnioski - zaawansowane modele}
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
-            \textbf{Conditional VAE:}
+            \textbf{Conditional COnvolutional VAE:}
             \begin{itemize}
                 \item Kontrolowane generowanie cyfr
                 \item Interpolacja między cyframi
@@ -408,8 +407,8 @@
 \begin{frame}{Podsumowanie}
     \begin{block}{Najważniejsze obserwacje}
         \begin{itemize}
-            \item Conditional VAE i Diffusion Model osiągnęły najlepsze wyniki jakościowe.
-            \item Conditional VAE oferuje najlepszy balans jakości, szybkości i kontroli.
+            \item Conditional Convolutional VAE i Diffusion Model osiągnęły najlepsze wyniki jakościowe.
+            \item Conditional Convolutional VAE oferuje najlepszy balans jakości, szybkości i kontroli.
             \item Diffusion Model daje świetną jakość kosztem czasu generowania.
             \item GAN pozostaje dobrym wyborem mimo trudności w treningu.
             \item VQ-VAE zaskoczył szybkością konwergencji.
@@ -421,7 +420,7 @@
 \begin{frame}{Podsumowanie - cz. 2}
     \begin{block}{Ranking modeli}
         \begin{enumerate}
-            \item \textbf{Conditional VAE:} Najlepsza kontrola, doskonała jakość, łatwy w użyciu.
+            \item \textbf{Conditional Convolutional VAE:} Najlepsza kontrola, doskonała jakość, łatwy w użyciu.
             \item \textbf{Diffusion:} Bardzo wysoka jakość, ale wolniejszy proces.
             \item \textbf{GAN:} Dobra jakość wizualna, trudniejszy trening.
             \item \textbf{Convolutional VAE:} Solidna jakość, dobry dla obrazów.
@@ -432,7 +431,7 @@
 
     \begin{block}{Rekomendacje}
         \begin{itemize}
-            \item Dla większości zastosowań: Conditional VAE.
+            \item Dla większości zastosowań: Conditional Convolutional VAE.
             \item Gdy jakość jest priorytetem: Diffusion Model.
         \end{itemize}
     \end{block}

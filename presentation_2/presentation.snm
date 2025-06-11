@@ -1,8 +1,8 @@
 \beamer@slide {fig:autoencoder_architecture}{5}
-\beamer@slide {fig:conditional_vae_architecture}{6}
-\beamer@slide {fig:vae_architecture}{7}
-\beamer@slide {fig:gan_architecture}{8}
-\beamer@slide {fig:vqvae_architecture}{9}
+\beamer@slide {fig:vae_architecture}{6}
+\beamer@slide {fig:conditional_vae_architecture}{7}
+\beamer@slide {fig:vqvae_architecture}{8}
+\beamer@slide {fig:gan_architecture}{9}
 \beamer@slide {fig:diffusion_architecture}{10}
 \beamer@slide {fig:autoencoder_learning_curve}{13}
 \beamer@slide {fig:conditional_vae_learning_curve}{13}
